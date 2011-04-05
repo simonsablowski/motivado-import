@@ -18,13 +18,13 @@ class ImporterController extends Controller {
 		return $matches;
 	}
 	
+	//TODO
 	protected function handleGateway($node) {
-		$node;
 		return TRUE;
 	}
 	
+	//TODO
 	protected function handleQuestion($node) {
-		$node;
 		return array(
 			'type' => 'Options',
 			'key' => NULL,
@@ -55,16 +55,22 @@ class ImporterController extends Controller {
 	}
 	
 	protected function findStartNode() {
-		return $this->setNodePointer(pos($this->getXmlBuffer()->xpath('WorkflowProcesses/WorkflowProcess/Activities/Activity/Event/StartEvent/parent::*/parent::*')));
+		$pattern = 'WorkflowProcesses/WorkflowProcess/Activities/Activity';
+		$pattern .= '/Event/StartEvent/parent::*/parent::*';
+		return $this->setNodePointer(pos($this->getXmlBuffer()->xpath($pattern)));
 	}
 	
 	protected function findNextNodes() {
 		$id = $this->getNodePointer()->attributes()->Id;
 		$nodes = array();
-		foreach ($this->getXmlBuffer()->xpath(sprintf('WorkflowProcesses/WorkflowProcess/Transitions/Transition[@From="%s"]', $id)) as $transition) {
-			$node = pos($this->getXmlBuffer()->xpath(sprintf('WorkflowProcesses/WorkflowProcess/Activities/Activity[@Id="%s"]/Implementation/Task/parent::*/parent::*', $transition->attributes()->To)));
-			
-			if ($this->registerNode($node)) $nodes[] = $node;
+		$pattern = sprintf('WorkflowProcesses/WorkflowProcess/Transitions/Transition[@From="%s"]', $id);
+		foreach ($this->getXmlBuffer()->xpath($pattern) as $transition) {
+			$pattern = sprintf('WorkflowProcesses/WorkflowProcess/Activities/Activity[@Id="%s"]', $transition->attributes()->To);
+			$pattern .= '/Implementation/Task/parent::*/parent::*';
+			if ($array = $this->getXmlBuffer()->xpath($pattern)) {
+				$node = pos($array);
+				if ($this->registerNode($node)) $nodes[] = $node;
+			}
 		}
 		return $nodes;
 	}
@@ -74,29 +80,21 @@ class ImporterController extends Controller {
 			return $this->Objects[$id];
 		}
 		
-		/*if (isset($node->Route)) {
-			return $this->handleGateway($node);
-		}*/
-		
 		$title = (string)$node->attributes()->Name;
-		switch ($node->Implementation) {
-			default:
-			case 'TaskManual':
-				$analysis = $this->analyze((string)$node->Description);
-				list($type, $key, $properties, $description) = each($analysis);
-				break;
-			case 'TaskScript':
-				$description = (string)$node->Description;
-				if ($title && !$description) {
-					$description = $title;
-					$title = '';
-				}
-				$type = 'Text';
-				break;
-			case 'TaskReference':
-				$analysis = $this->handleQuestion($node);
-				list($type, $key, $properties) = each($analysis);
-				break;
+		
+		if (isset($node->Implementation->Task->TaskManual)) {
+			$analysis = $this->analyze((string)$node->Description);
+			list($type, $key, $properties, $description) = each($analysis);
+		} else if (isset($node->Implementation->Task->TaskScript)) {
+			$description = (string)$node->Description;
+			if ($title && !$description) {
+				$description = $title;
+				$title = '';
+			}
+			$type = 'Text';
+		} else if (isset($node->Implementation->Task->TaskReference)) {
+			$analysis = $this->handleQuestion($node);
+			list($type, $key, $properties) = each($analysis);
 		}
 		
 		$Object = new Object(array(
@@ -133,5 +131,6 @@ class ImporterController extends Controller {
 	public function index() {
 		$this->truncateTables();
 		$this->import('psychotest');
+		var_dump(count($this->getObjects()));
 	}
 }
