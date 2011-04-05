@@ -9,9 +9,8 @@ body {
 }
 
 #document {
-	margin: 24px auto;
+	margin: 24px;
 	position: relative;
-	width: 1000px;
 }
 
 #document h1, #document h2  {
