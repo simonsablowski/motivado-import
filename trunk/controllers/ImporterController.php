@@ -54,16 +54,16 @@ class ImporterController extends Controller {
 	}
 	
 	protected function findStartNode() {
-		$pattern = '//Activities/Activity/Event/StartEvent/parent::*/parent::*';
+		$pattern = '//Activity/Event/StartEvent/parent::*/parent::*';
 		return $this->setNodePointer(pos($this->getXmlBuffer()->xpath($pattern)));
 	}
 	
 	protected function findNextNodes() {
 		$id = $this->getNodePointer()->attributes()->Id;
 		$nodes = array();
-		$pattern = '//Transitions/Transition[@From="%s"]';
+		$pattern = '//Transition[@From="%s"]';
 		foreach ($this->getXmlBuffer()->xpath(sprintf($pattern, $id)) as $transition) {
-			$pattern = '//Activities/Activity[@Id="%s"]/Implementation/Task/node()/parent::*/parent::*/parent::*';
+			$pattern = '//Activity[@Id="%s"]/Implementation/Task/*/parent::*/parent::*/parent::*';
 			if ($array = $this->getXmlBuffer()->xpath(sprintf($pattern, $transition->attributes()->To))) {
 				$node = pos($array);
 				if ($this->registerNode($node)) $nodes[] = $node;
