@@ -13,9 +13,8 @@ class ImporterController extends Controller {
 	}
 	
 	protected function analyze($string) {
-		preg_match('/\$(\w+):(\w+)\((.*)\)(.*)/i', $string, $matches);
-		array_shift($matches);
-		return $matches;
+		preg_match('/\$(\w+):(\w+)\((.*)\)(.*)/is', $string, $matches);
+		return array_map('trim', array_slice($matches, 1));
 	}
 	
 	//TODO
@@ -83,8 +82,7 @@ class ImporterController extends Controller {
 		$title = (string)$node->attributes()->Name;
 		
 		if (isset($node->Implementation->Task->TaskManual)) {
-			$analysis = $this->analyze((string)$node->Description);
-			list($type, $key, $properties, $description) = each($analysis);
+			list($type, $key, $properties, $description) = $this->analyze((string)$node->Description);
 		} else if (isset($node->Implementation->Task->TaskScript)) {
 			$description = (string)$node->Description;
 			if ($title && !$description) {
@@ -93,8 +91,7 @@ class ImporterController extends Controller {
 			}
 			$type = 'Text';
 		} else if (isset($node->Implementation->Task->TaskReference)) {
-			$analysis = $this->handleQuestion($node);
-			list($type, $key, $properties) = each($analysis);
+			list($type, $key, $properties) = $this->handleQuestion($node);
 		}
 		
 		$Object = new Object(array(
