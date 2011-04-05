@@ -1,0 +1,80 @@
+@import 'standards.css';
+
+* {
+	text-align: justify;
+}
+
+body {
+	font-size: 12px;
+}
+
+#document {
+	margin: 24px auto;
+	position: relative;
+	width: 1000px;
+}
+
+#document h1, #document h2  {
+	padding-bottom: 6px;
+}
+
+#document table th, #document table td  {
+	padding: 6px 6px 9px;
+}
+
+#document h1 {
+	font-size: 24px;
+}
+
+#document h2 {
+	font-size: 16px;
+}
+
+#document em {
+	font-style: italic;
+}
+
+#document a {
+	color: #666;
+	text-decoration: none;
+}
+
+#document .content {
+	border: 1px solid #ccc;
+	float: left;
+	margin: 18px 0;
+	padding: 0;
+	width: 100%;
+}
+
+#document .content .field {
+	padding-left: 24px;
+	width: 90px;
+}
+
+#document .content input, #document .content select, #document .content textarea {
+	border: 1px solid #ccc;
+	padding: 0;
+}
+
+#document .content .head {
+	background-color: #777;
+}
+
+#document .content .head, #document .content .head a {
+	color: #fff;
+}
+
+#document .content .even {
+	background-color: #f9f9f9;
+}
+
+#document .content .odd {
+	background-color: #f6f6f6;
+}
+
+#document .content .highlight {
+	background-color: #fff;
+	border: 1px solid #999;
+	padding: 6px 6px 9px;
+}
