@@ -12,13 +12,16 @@ class ImporterController extends Controller {
 			
 		}
 		
-		$Coaching = new Coaching(array(
-			'id' => 1,
-			'key' => 'psychotest',
-			'language' => 'de_DE',
-			'title' => 'Psychotest'
-		));
-		$Coaching->create();
+		try {
+			$Coaching = Coaching::findByKey('psychotest');
+		} catch (Error $Error) {
+			$Coaching = new Coaching(array(
+				'key' => 'psychotest',
+				'language' => 'de_DE',
+				'title' => 'Psychotest'
+			));
+			$Coaching->create();
+		}
 		
 		$this->setImporter(new Importer($this->getConfiguration()));
 		$this->getImporter()->setCoachings(array($Coaching));
