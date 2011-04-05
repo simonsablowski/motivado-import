@@ -54,19 +54,17 @@ class ImporterController extends Controller {
 	}
 	
 	protected function findStartNode() {
-		$pattern = 'WorkflowProcesses/WorkflowProcess/Activities/Activity';
-		$pattern .= '/Event/StartEvent/parent::*/parent::*';
+		$pattern = '//Activities/Activity/Event/StartEvent/parent::*/parent::*';
 		return $this->setNodePointer(pos($this->getXmlBuffer()->xpath($pattern)));
 	}
 	
 	protected function findNextNodes() {
 		$id = $this->getNodePointer()->attributes()->Id;
 		$nodes = array();
-		$pattern = sprintf('WorkflowProcesses/WorkflowProcess/Transitions/Transition[@From="%s"]', $id);
-		foreach ($this->getXmlBuffer()->xpath($pattern) as $transition) {
-			$pattern = sprintf('WorkflowProcesses/WorkflowProcess/Activities/Activity[@Id="%s"]', $transition->attributes()->To);
-			$pattern .= '/Implementation/Task/parent::*/parent::*';
-			if ($array = $this->getXmlBuffer()->xpath($pattern)) {
+		$pattern = '//Transitions/Transition[@From="%s"]';
+		foreach ($this->getXmlBuffer()->xpath(sprintf($pattern, $id)) as $transition) {
+			$pattern = '//Activities/Activity[@Id="%s"]/Implementation/Task/node()/parent::*/parent::*/parent::*';
+			if ($array = $this->getXmlBuffer()->xpath(sprintf($pattern, $transition->attributes()->To))) {
 				$node = pos($array);
 				if ($this->registerNode($node)) $nodes[] = $node;
 			}
@@ -100,7 +98,7 @@ class ImporterController extends Controller {
 			'description' => isset($description) ? $description : NULL,
 			'type' => $type,
 			'key' => isset($key) ? $key : NULL,
-			'properties' => isset($properties) ? $properties : NULL
+			'properties' => isset($properties) ? sprintf('{%s}', $properties) : NULL
 		));
 		$Object->create();
 		$this->Objects[$id] = $Object;
