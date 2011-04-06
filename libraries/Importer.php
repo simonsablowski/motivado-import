@@ -141,7 +141,6 @@ class Importer extends Application {
 		$properties .= "]";
 		
 		return array_values(array(
-			'type' => 'Options',
 			'key' => NULL,
 			'properties' => $properties
 		));
@@ -152,6 +151,28 @@ class Importer extends Application {
 		return TRUE;
 	}
 	
+	protected function isNodeType($node, $type = NULL) {
+		switch ($type) {
+			default:
+				return isset($node->Implementation->Task->TaskManual);
+			case 'Options':
+				return isset($node->Implementation->Task->TaskReference);
+			case 'Text':
+				return isset($node->Implementation->Task->TaskScript);
+			case 'Gateway':
+				return isset($node->Route);
+		}
+	}
+	
+	protected function abstractNode($node) {
+		return array_map(function($node) {
+			foreach ($node as $key => $value) {
+				$node[$key] = $value != ($v = substr($value, 0, 200)) ? $v . '...' : $value;
+			}
+			return $node;
+		}, array_slice((array)$node, 0, 3));
+	}
+	
 	protected function registerNode($node) {
 		if (isset($this->Objects[$id = (string)$node->attributes()->Id])) {
 			return $this->Objects[$id];
@@ -160,25 +181,21 @@ class Importer extends Application {
 		$title = (string)$node->attributes()->Name;
 		$description = (string)$node->Description;
 		
-		if (isset($node->Implementation->Task->TaskManual)) {
+		if ($this->isNodeType($node)) {
 			list($type, $key, $properties, $description) = $this->analyze($description);
-		} else if (isset($node->Implementation->Task->TaskScript)) {
+		} else if ($this->isNodeType($node, 'Options')) {
+			$type = 'Options';
+			list($key, $properties) = $this->handleOptions($node);
+		} else if ($this->isNodeType($node, 'Text')) {
+			$type = 'Text';
 			if ($title && !$description) {
 				$description = $title;
 				$title = '';
 			}
-			$type = 'Text';
-		} else if (isset($node->Implementation->Task->TaskReference)) {
-			list($type, $key, $properties) = $this->handleOptions($node);
-		} else if (isset($node->Route)) {
+		} else if ($this->isNodeType($node, 'Gateway')) {
 			return $this->handleGateway($node);
 		} else {
-			throw new Error('Unknown object type', array_map(function($node) {
-				foreach ($node as $key => $value) {
-					$node[$key] = $value != ($v = substr($value, 0, 200)) ? $v . '...' : $value;
-				}
-				return $node;
-			}, array_slice((array)$node, 0, 3)));
+			throw new Error('Unknown object type', $this->abstractNode($node));
 		}
 		
 		$Object = new Object(array(

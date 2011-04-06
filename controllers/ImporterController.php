@@ -41,7 +41,6 @@ class ImporterController extends Controller {
 		
 		$this->getImporter()->run($keys);
 		
-		$this->getOutputBuffer()->start();
 		foreach ($this->getImporter()->getObjects() as $Object) {
 			var_dump($Object->getData());
 		}
