@@ -41,16 +41,12 @@ class ImporterController extends Controller {
 		
 		$this->getImporter()->run($keys);
 		
-		$output = '';
 		$this->getOutputBuffer()->start();
 		foreach ($this->getImporter()->getObjects() as $Object) {
 			var_dump($Object->getData());
-			$output .= $this->getOutputBuffer()->read();
 		}
-		$this->getOutputBuffer()->clean();
-		
 		$this->displayView('Importer.index.php', array(
-			'output' => $output
+			'output' => $this->getOutputBuffer()->get()
 		));
 	}
 }
