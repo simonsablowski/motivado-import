@@ -44,49 +44,6 @@ class Importer extends Application {
 		return $result;
 	}
 	
-	protected function analyze($string) {
-		preg_match('/\$(\w+):(\w+)\((.*)\)(.*)/is', $string, $matches);
-		return array_map('trim', array_slice($matches, 1));
-	}
-	
-	//TODO
-	protected function handleGateway($node) {
-		return TRUE;
-	}
-	
-	//TODO: generate conditions
-	protected function handleQuestion($node) {
-		$nodePointer = $this->getNodePointer();
-		$this->setNodePointer($node);
-		
-		$id = $node->attributes()->Id;
-		$pattern = '//Activity[@Id="%s"]/Implementation/Task/parent::*/parent::*';
-		$options = array();
-		foreach ($this->getXmlBuffer()->xpath(sprintf('//Transition[@From="%s"]', $id)) as $transition) {
-			if ($array = $this->getXmlBuffer()->xpath(sprintf($pattern, $transition->attributes()->To))) {
-				if ($option = pos($array)) {
-					$options[(string)$transition->attributes()->Name] = (string)$option->attributes()->Name;
-				}
-			}
-		}
-		$this->setNodePointer($nodePointer);
-		
-		$properties = "options:[";
-		$i = 1;
-		foreach ($options as $key => $value) {
-			$comma = $i < count($options) ? ',' : '';
-			$properties .= sprintf("{key:'%s',value:'%s'}%s", $key, $value, $comma);
-			$i++;
-		}
-		$properties .= "]";
-		
-		return array(
-			'Options',
-			NULL,
-			$properties
-		);
-	}
-	
 	protected function pushOntoXmlStack($element) {
 		return $this->xmlStack[] = $element;
 	}
@@ -117,6 +74,21 @@ class Importer extends Application {
 		return $this->setNodePointer($this->getXmlBuffer()->xpath($pattern));
 	}
 	
+	protected function findTargetNode($pattern) {
+		if ($array = $this->getXmlBuffer()->xpath($pattern)) {
+			return pos($array);
+		}
+		return NULL;
+	}
+	
+	protected function findNodesTransitions($node = NULL) {
+		if (is_null($node)) {
+			$node = $this->getNodePointer();
+		}
+		$id = $node->attributes()->Id;
+		return $this->getXmlBuffer()->xpath(sprintf('//Transition[@From="%s"]', $id));
+	}
+	
 	protected function findStartNode($pattern = NULL) {
 		if (is_null($pattern)) {
 			$pattern = '//Activity/Event/StartEvent/parent::*/parent::*';
@@ -129,14 +101,55 @@ class Importer extends Application {
 			$pattern = '//Activity[@Id="%1$s"]/Implementation/Task/*/parent::*/parent::*/parent::*';
 			$pattern .= '|//Activity[@Id="%1$s"]/Route/parent::*';
 		}
-		$id = $this->getNodePointer()->attributes()->Id;
 		$nodes = array();
-		foreach ($this->getXmlBuffer()->xpath(sprintf('//Transition[@From="%s"]', $id)) as $transition) {
-			if ($array = $this->getXmlBuffer()->xpath(sprintf($pattern, $transition->attributes()->To))) {
-				if ($this->registerNode($node = pos($array))) $nodes[] = $node;
+		foreach ($this->findNodesTransitions() as $transition) {
+			if ($node = $this->findTargetNode(sprintf($pattern, $transition->attributes()->To))) {
+				if ($this->registerNode($node)) {
+					$this->registerTransition($transition);
+					$nodes[] = $node;
+				}
 			}
 		}
 		return $nodes;
+	}
+	
+	protected function analyze($string) {
+		preg_match('/\$(\w+):(\w+)\((.*)\)(.*)/is', $string, $matches);
+		return array_map('trim', array_slice($matches, 1));
+	}
+	
+	//TODO: generate conditions
+	protected function handleOptions($node) {
+		$pattern = '//Activity[@Id="%s"]/Implementation/Task/parent::*/parent::*';
+		$nodePointer = $this->getNodePointer();
+		$this->setNodePointer($node);
+		$options = array();
+		foreach ($this->findNodesTransitions() as $transition) {
+			if ($option = $this->findTargetNode(sprintf($pattern, $transition->attributes()->To))) {
+				$options[(string)$transition->attributes()->Name] = (string)$option->attributes()->Name;
+			}
+		}
+		$this->setNodePointer($nodePointer);
+		
+		$properties = "options:[";
+		$i = 1;
+		foreach ($options as $key => $value) {
+			$comma = $i < count($options) ? ',' : '';
+			$properties .= sprintf("{key:'%s',value:'%s'}%s", $key, $value, $comma);
+			$i++;
+		}
+		$properties .= "]";
+		
+		return array(
+			'Options',
+			NULL,
+			$properties
+		);
+	}
+	
+	//TODO
+	protected function handleGateway($node) {
+		return TRUE;
 	}
 	
 	protected function registerNode($node) {
@@ -156,7 +169,7 @@ class Importer extends Application {
 			}
 			$type = 'Text';
 		} else if (isset($node->Implementation->Task->TaskReference)) {
-			list($type, $key, $properties) = $this->handleQuestion($node);
+			list($type, $key, $properties) = $this->handleOptions($node);
 		} else if (isset($node->Route)) {
 			return $this->handleGateway($node);
 		} else {
@@ -180,6 +193,35 @@ class Importer extends Application {
 		$this->Objects[$id] = $Object;
 		
 		return $Object;
+	}
+	
+	protected function registerTransition($transition) {
+		if (isset($this->ObjectTransitions[$id = (string)$transition->attributes()->Id])) {
+			return $this->ObjectTransitions[$id];
+		}
+		
+		if (isset($this->Objects[$from = (string)$transition->attributes()->From])) {
+			$LeftId = $this->Objects[$from]->getId();
+		} else {
+			$LeftId = 0;
+		}
+		if (isset($this->Objects[$to = (string)$transition->attributes()->To])) {
+			$RightId = $this->Objects[$to]->getId();
+		} else {
+			$RightId = 0;
+		}
+		$condition = (string)$transition->attributes()->Name;
+		
+		$ObjectTransition = new ObjectTransition(array(
+			'CoachingId' => $this->getCurrentCoaching()->getId(),
+			'LeftId' => $LeftId,
+			'RightId' => $RightId,
+			'condition' => $condition
+		));
+		$ObjectTransition->create();
+		$this->ObjectTransition[$id] = $ObjectTransition;
+		
+		return $ObjectTransition;
 	}
 	
 	protected function traverseNodes() {
