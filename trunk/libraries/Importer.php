@@ -101,7 +101,12 @@ class Importer extends Application {
 		} else if (isset($node->Implementation->Task->TaskReference)) {
 			list($type, $key, $properties) = $this->handleQuestion($node);
 		} else {
-			throw new Error('Unknown object type', $node);
+			throw new Error('Unknown object type', array_map(function($node) {
+				foreach ($node as $key => $value) {
+					$node[$key] = $value != ($v = substr($value, 0, 200)) ? $v . '...' : $value;
+				}
+				return $node;
+			}, array_slice((array)$node, 0, 3)));
 		}
 		
 		$Object = new Object(array(
