@@ -140,11 +140,11 @@ class Importer extends Application {
 		}
 		$properties .= "]";
 		
-		return array(
-			'Options',
-			NULL,
-			$properties
-		);
+		return array_values(array(
+			'type' => 'Options',
+			'key' => NULL,
+			'properties' => $properties
+		));
 	}
 	
 	//TODO
