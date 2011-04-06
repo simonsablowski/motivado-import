@@ -11,9 +11,22 @@ class Importer extends Application {
 		$this->setConfiguration($configuration);
 	}
 	
-	public function run($void = NULL) {
+	public function run($Coachings) {
 		$this->truncateTables();
-		$this->import($this->getCurrentCoaching()->getKey());
+		
+		foreach ($Coachings as $key) {
+			try {
+				$Coaching = Coaching::findByKey($key);
+			} catch (Error $Error) {
+				$Coaching = new Coaching(array(
+					'key' => $key
+				));
+				$Coaching->create();
+			}
+			$this->setCurrentCoaching($Coaching);
+			
+			$this->import($this->getCurrentCoaching()->getKey());
+		}
 	}
 	
 	protected function truncateTables() {
@@ -30,12 +43,36 @@ class Importer extends Application {
 		return TRUE;
 	}
 	
-	//TODO
+	//TODO: generate conditions
 	protected function handleQuestion($node) {
+		$nodePointer = $this->getNodePointer();
+		$this->setNodePointer($node);
+		
+		$id = $node->attributes()->Id;
+		$pattern = '//Activity[@Id="%s"]/Implementation/Task/parent::*/parent::*';
+		$options = array();
+		foreach ($this->getXmlBuffer()->xpath(sprintf('//Transition[@From="%s"]', $id)) as $transition) {
+			if ($array = $this->getXmlBuffer()->xpath(sprintf($pattern, $transition->attributes()->To))) {
+				if ($option = pos($array)) {
+					$options[(string)$transition->attributes()->Name] = (string)$option->attributes()->Name;
+				}
+			}
+		}
+		$this->setNodePointer($nodePointer);
+		
+		$properties = "options: [\n";
+		$i = 1;
+		foreach ($options as $key => $value) {
+			$comma = $i < count($options) ? ',' : '';
+			$properties .= sprintf("\t{key: '%s', value: '%s'}%s\n", $key, $value, $comma);
+			$i++;
+		}
+		$properties .= "]";
+		
 		return array(
-			'type' => 'Options',
-			'key' => NULL,
-			'properties' => ''
+			'Options',
+			NULL,
+			$properties
 		);
 	}
 	
@@ -51,6 +88,10 @@ class Importer extends Application {
 		return $this->popOffXmlStack();
 	}
 	
+	protected function setCurrentCoaching(Coaching $Coaching) {
+		return $this->Coachings[] = $Coaching;
+	}
+	
 	protected function getCurrentCoaching() {
 		return end($this->Coachings);
 	}
@@ -58,24 +99,21 @@ class Importer extends Application {
 	protected function import($directory) {
 		$path = $this->getConfiguration('pathModeling') . $directory;
 		$path .= substr($path, -1) == '/' ? '' : '/';
-		$this->scanFile($path . 'Start.xpdl');
+		$this->scanFile($path . $this->getConfiguration('startFileNameModeling'));
 	}
 	
 	protected function findNode($pattern) {
 		return $this->setNodePointer($this->getXmlBuffer()->xpath($pattern));
 	}
 	
-	protected function findStartNode() {
-		$pattern = '//Activity/Event/StartEvent/parent::*/parent::*';
+	protected function findStartNode($pattern = '//Activity/Event/StartEvent/parent::*/parent::*') {
 		return $this->setNodePointer(pos($this->getXmlBuffer()->xpath($pattern)));
 	}
 	
-	protected function findNextNodes() {
+	protected function findNextNodes($pattern = '//Activity[@Id="%s"]/Implementation/Task/*/parent::*/parent::*/parent::*') {
 		$id = $this->getNodePointer()->attributes()->Id;
 		$nodes = array();
-		$pattern = '//Transition[@From="%s"]';
-		foreach ($this->getXmlBuffer()->xpath(sprintf($pattern, $id)) as $transition) {
-			$pattern = '//Activity[@Id="%s"]/Implementation/Task/*/parent::*/parent::*/parent::*';
+		foreach ($this->getXmlBuffer()->xpath(sprintf('//Transition[@From="%s"]', $id)) as $transition) {
 			if ($array = $this->getXmlBuffer()->xpath(sprintf($pattern, $transition->attributes()->To))) {
 				if ($this->registerNode($node = pos($array))) $nodes[] = $node;
 			}
