@@ -8,28 +8,41 @@ class ImporterController extends Controller {
 			throw new FatalError('Modeling path not set');
 		}
 		
-		if (!is_null($this->getRequest()->getData('autoRun'))) {
-			
-		}
-		
-		try {
-			$Coaching = Coaching::findByKey('psychotest');
-		} catch (Error $Error) {
-			$Coaching = new Coaching(array(
-				'key' => 'psychotest',
-				'language' => 'de_DE',
-				'title' => 'Psychotest'
-			));
-			$Coaching->create();
-		}
-		
 		$this->setImporter(new Importer($this->getConfiguration()));
-		$this->getImporter()->setCoachings(array($Coaching));
+	}
+	
+	protected function getImportDirectories($baseDirectory = NULL) {
+		if (is_null($baseDirectory)) $baseDirectory = $this->getConfiguration('pathModeling');
+		
+		$directories = array();
+		$base = dir($baseDirectory);
+		while (($directory = $base->read()) !== FALSE) {
+			if (in_array($directory, $this->getConfiguration('ignoreDirectoriesModeling'))) continue;
+			if (!is_dir($pathDirectory = $baseDirectory . $directory)) continue;
+			$dir = dir($pathDirectory);
+			while (($file = $dir->read()) !== FALSE) {
+				if ($file == $this->getConfiguration('startFileNameModeling')) {
+					break $directories[$directory] = $pathDirectory;
+				}
+			}
+			$dir->close();
+			$directories = array_merge($directories, $this->getImportDirectories($pathDirectory));
+		}
+		$base->close();
+		
+		return $directories;
 	}
 	
 	public function index() {
 		$this->setup();
-		$this->getImporter()->run();
-		var_dump(count($this->getImporter()->getObjects()));
+		
+		// $keys = array_keys($this->getImportDirectories());
+		$keys = array('question');
+		
+		$this->getImporter()->run($keys);
+		
+		foreach ($this->getImporter()->getObjects() as $Object) {
+			var_dump($Object->getData());
+		}
 	}
 }

@@ -25,3 +25,5 @@ $configuration['Database'] = array(
 $configuration['debugMode'] = TRUE;
 
 $configuration['pathModeling'] = $configuration['pathApplication'] . 'material/modeling/';
+$configuration['startFileNameModeling'] = 'Start.xpdl';
+$configuration['ignoreDirectoriesModeling'] = array('.', '..', '.svn', 'attachments');
