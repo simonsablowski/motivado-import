@@ -12,8 +12,6 @@ class Importer extends Application {
 	}
 	
 	public function run($Coachings) {
-		$this->truncateTables();
-		
 		foreach ($Coachings as $key) {
 			try {
 				$Coaching = Coaching::findByKey($key);
@@ -25,12 +23,25 @@ class Importer extends Application {
 			}
 			$this->setCurrentCoaching($Coaching);
 			
+			$this->cleanTables();
 			$this->import($this->getCurrentCoaching()->getKey());
 		}
 	}
 	
-	protected function truncateTables() {
+	//TODO: delete doesn't work
+	protected function cleanTables() {
 		return Database::query('TRUNCATE `object`') && Database::query('TRUNCATE `objecttransition`');
+		$condition = array(
+			'CoachingId' => $this->getCurrentCoaching()->getId()
+		);
+		$result = FALSE;
+		foreach (Object::findAll($condition) as $Object) {
+			$result = $result && $Object->delete();
+		}
+		foreach (ObjectTransition::findAll($condition) as $ObjectTransition) {
+			$result = $result && $ObjectTransition->delete();
+		}
+		return $result;
 	}
 	
 	protected function analyze($string) {
@@ -60,11 +71,11 @@ class Importer extends Application {
 		}
 		$this->setNodePointer($nodePointer);
 		
-		$properties = "options: [\n";
+		$properties = "options:[";
 		$i = 1;
 		foreach ($options as $key => $value) {
 			$comma = $i < count($options) ? ',' : '';
-			$properties .= sprintf("\t{key: '%s', value: '%s'}%s\n", $key, $value, $comma);
+			$properties .= sprintf("{key:'%s',value:'%s'}%s", $key, $value, $comma);
 			$i++;
 		}
 		$properties .= "]";
@@ -106,11 +117,18 @@ class Importer extends Application {
 		return $this->setNodePointer($this->getXmlBuffer()->xpath($pattern));
 	}
 	
-	protected function findStartNode($pattern = '//Activity/Event/StartEvent/parent::*/parent::*') {
+	protected function findStartNode($pattern = NULL) {
+		if (is_null($pattern)) {
+			$pattern = '//Activity/Event/StartEvent/parent::*/parent::*';
+		}
 		return $this->setNodePointer(pos($this->getXmlBuffer()->xpath($pattern)));
 	}
 	
-	protected function findNextNodes($pattern = '//Activity[@Id="%s"]/Implementation/Task/*/parent::*/parent::*/parent::*') {
+	protected function findNextNodes($pattern = NULL) {
+		if (is_null($pattern)) {
+			$pattern = '//Activity[@Id="%1$s"]/Implementation/Task/*/parent::*/parent::*/parent::*';
+			$pattern .= '|//Activity[@Id="%1$s"]/Route/parent::*';
+		}
 		$id = $this->getNodePointer()->attributes()->Id;
 		$nodes = array();
 		foreach ($this->getXmlBuffer()->xpath(sprintf('//Transition[@From="%s"]', $id)) as $transition) {
@@ -128,6 +146,7 @@ class Importer extends Application {
 		
 		$title = (string)$node->attributes()->Name;
 		$description = (string)$node->Description;
+		
 		if (isset($node->Implementation->Task->TaskManual)) {
 			list($type, $key, $properties, $description) = $this->analyze($description);
 		} else if (isset($node->Implementation->Task->TaskScript)) {
@@ -138,6 +157,8 @@ class Importer extends Application {
 			$type = 'Text';
 		} else if (isset($node->Implementation->Task->TaskReference)) {
 			list($type, $key, $properties) = $this->handleQuestion($node);
+		} else if (isset($node->Route)) {
+			return $this->handleGateway($node);
 		} else {
 			throw new Error('Unknown object type', array_map(function($node) {
 				foreach ($node as $key => $value) {
