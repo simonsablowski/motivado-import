@@ -203,7 +203,7 @@ class Importer extends Application {
 					$this->isNodeType($node, 'End')) {
 			return TRUE;
 		} else {
-			throw new Error('Unknown object type', $this->abstractNode($node));
+			throw new FatalError('Unknown object type', $this->abstractNode($node));
 		}
 		
 		$Object = new Object(array(
