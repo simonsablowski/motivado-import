@@ -14,8 +14,8 @@
 				</thead>
 				<tbody class="body">
 					<tr class="odd">
-						<td>
-							<? echo $output; ?>
+						<td class="field">
+							<? echo /*$output*/$this->localize('Import completed successfully!'); ?>
 
 						</td>
 					</tr>
