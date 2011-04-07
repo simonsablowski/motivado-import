@@ -35,17 +35,18 @@ class ImporterController extends Controller {
 	
 	public function index() {
 		$this->setup();
-		
 		// $keys = array_keys($this->getImportDirectories());
 		$keys = array('psychotest');
 		
 		$this->getImporter()->run($keys);
 		
+		return $this->displayView('Importer.index.php');
+		/*$this->getOutputBuffer()->start();
 		foreach ($this->getImporter()->getObjects() as $Object) {
 			var_dump($Object->getData());
 		}
 		$this->displayView('Importer.index.php', array(
 			'output' => $this->getOutputBuffer()->get()
-		));
+		));*/
 	}
 }
