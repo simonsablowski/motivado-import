@@ -119,17 +119,20 @@ class Importer extends Application {
 		return $nodes;
 	}
 	
-	protected function analyze($string) {
-		preg_match('/\$(\w+)(:(\w+))?\((.*)\)(.*)/is', $string, $matches);
+	protected function handleObject($node) {
+		preg_match('/\$(\w+)(:(\w+))?\((.*)\)(.*)/is', (string)$node->Description, $matches);
+		if (!$matches) {
+			throw new FatalError('Object type undefined', $this->abstractNode($node));
+		}
+		
 		return array_map('trim', array_values(array(
 			'type' => $matches[1],
 			'key' => $matches[3],
 			'properties' => $matches[4],
 			'description' => $matches[5]
-		));
+		)));
 	}
 	
-	//TODO: generate keys
 	protected function handleOptions($node) {
 		$pattern = '//Activity[@Id="%s"]/Implementation/Task/parent::*/parent::*';
 		$options = array();
@@ -139,18 +142,38 @@ class Importer extends Application {
 			}
 		}
 		
-		$properties = '"options":[';
-		$i = 1;
+		$properties = array('options' => array());
+		$o = 1;
 		foreach ($options as $key => $value) {
-			$comma = $i < count($options) ? ',' : '';
-			$properties .= sprintf('{"key":%s,"value":"%s"}%s', $key ? sprintf('"%s"', $key) : $i, $value, $comma);
-			$i++;
+			$properties['options'][] = array(
+				'key' => $key ? $key : $o,
+				'value' => $value
+			);
+			$o++;
 		}
-		$properties .= "]";
+		
+		if (!$key = (string)$node->Description) {
+			$key = preg_replace('/[^a-z0-9]/i', '', (string)$node->attributes()->Id);
+		}
 		
 		return array_values(array(
-			'key' => 'var',
+			'key' => $key,
 			'properties' => $properties
+		));
+	}
+	
+	protected function handleText($node) {
+		$title = (string)$node->attributes()->Name;
+		$description = (string)$node->Description;
+		
+		if ($title && !$description) {
+			$description = $title;
+			$title = '';
+		}
+		
+		return array_values(array(
+			'title' => $title,
+			'description' => $description
 		));
 	}
 	
@@ -193,16 +216,15 @@ class Importer extends Application {
 		$description = (string)$node->Description;
 		
 		if ($this->isNodeType($node)) {
-			list($type, $key, $properties, $description) = $this->analyze($description);
+			list($type, $key, $properties, $description) = $this->handleObject($node);
+			$properties = Json::decode(sprintf('{%s}', $properties));
 		} else if ($this->isNodeType($node, 'Options')) {
 			$type = 'Options';
 			list($key, $properties) = $this->handleOptions($node);
+			$description = '';
 		} else if ($this->isNodeType($node, 'Text')) {
 			$type = 'Text';
-			if ($title && !$description) {
-				$description = $title;
-				$title = '';
-			}
+			list($title, $description) = $this->handleText($node);
 		} else if ($this->isNodeType($node, 'Gateway') ||
 					$this->isNodeType($node, 'Option') ||
 					$this->isNodeType($node, 'End')) {
@@ -217,7 +239,7 @@ class Importer extends Application {
 			'description' => isset($description) ? $description : NULL,
 			'type' => $type,
 			'key' => isset($key) ? $key : NULL,
-			'properties' => isset($properties) ? sprintf('{%s}', $properties) : NULL
+			'properties' => isset($properties) ? Json::encode($properties) : NULL
 		));
 		$Object->create();
 		$this->Objects[$id] = $Object;
