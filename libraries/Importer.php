@@ -31,7 +31,7 @@ class Importer extends Application {
 	//TODO: delete doesn't work
 	protected function cleanTables() {
 		return Database::query('TRUNCATE `object`') && Database::query('TRUNCATE `objecttransition`');
-		$condition = array(
+		/*$condition = array(
 			'CoachingId' => $this->getCurrentCoaching()->getId()
 		);
 		$result = FALSE;
@@ -41,7 +41,7 @@ class Importer extends Application {
 		foreach (ObjectTransition::findAll($condition) as $ObjectTransition) {
 			$result = $result && $ObjectTransition->delete();
 		}
-		return $result;
+		return $result;*/
 	}
 	
 	protected function pushOntoXmlStack($element) {
@@ -144,7 +144,7 @@ class Importer extends Application {
 		$properties .= "]";
 		
 		return array_values(array(
-			'key' => NULL,
+			'key' => 'var',
 			'properties' => $properties
 		));
 	}
@@ -263,7 +263,10 @@ class Importer extends Application {
 							if ($this->registerNode($descendant)) {
 								$transition = $transitionTo;
 								$transition->attributes()->To = $descendant->attributes()->Id;
-								$transition->attributes()->Name = sprintf('var is \'%s\'', $transitionTo->attributes()->Name);
+								if (($Object = $this->Objects[(string)$transitionTo->attributes()->From]) && $Object->getType() != 'Options') {
+									throw new FatalError('Invalid option object', $this->abstractNode($node));
+								}
+								$transition->attributes()->Name = sprintf('%s is \'%s\'', $Object->getKey(), $transitionTo->attributes()->Name);
 								$result = $this->registerTransition($transition);
 							}
 						}
