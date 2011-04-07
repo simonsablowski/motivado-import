@@ -4,14 +4,14 @@ $configuration = array();
 
 $configuration['pathApplication'] = dirname(__FILE__) . '/';
 
-$configuration['pathApi'] = 'D:/Webprojekte/motivado/api/';
+$configuration['pathApi'] = 'D:/Entwicklung/api/';
 
-$configuration['basePath'] = 'http://localhost/motivado/importer/';
+$configuration['basePath'] = 'http://localhost/importer/';
 
 $configuration['includeDirectories'] = array(
 	$configuration['pathApplication'],
 	$configuration['pathApi'],
-	'D:/Webprojekte/nacho/'
+	'D:/Entwicklung/nacho/'
 );
 
 $configuration['Database'] = array(
@@ -20,6 +20,10 @@ $configuration['Database'] = array(
 	'name' => 'motivado_importer',
 	'user' => 'root',
 	'password' => ''
+);
+
+$configuration['Request'] = array(
+	'defaultQuery' => 'Importer/index'
 );
 
 $configuration['debugMode'] = TRUE;
