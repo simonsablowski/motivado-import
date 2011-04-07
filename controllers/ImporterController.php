@@ -36,7 +36,7 @@ class ImporterController extends Controller {
 	public function index() {
 		$this->setup();
 		// $keys = array_keys($this->getImportDirectories());
-		$keys = array('psychotest');
+		$keys = array('psychotest2');
 		
 		$this->getImporter()->run($keys);
 		
