@@ -120,8 +120,13 @@ class Importer extends Application {
 	}
 	
 	protected function analyze($string) {
-		preg_match('/\$(\w+):(\w+)\((.*)\)(.*)/is', $string, $matches);
-		return array_map('trim', array_slice($matches, 1));
+		preg_match('/\$(\w+)(:(\w+))?\((.*)\)(.*)/is', $string, $matches);
+		return array_map('trim', array_values(array(
+			'type' => $matches[1],
+			'key' => $matches[3],
+			'properties' => $matches[4],
+			'description' => $matches[5]
+		));
 	}
 	
 	//TODO: generate keys
@@ -134,11 +139,11 @@ class Importer extends Application {
 			}
 		}
 		
-		$properties = "options:[";
+		$properties = '"options":[';
 		$i = 1;
 		foreach ($options as $key => $value) {
 			$comma = $i < count($options) ? ',' : '';
-			$properties .= sprintf("{key:%s,value:'%s'}%s", $key ? sprintf('\'%s\'', $key) : $i, $value, $comma);
+			$properties .= sprintf('{"key":%s,"value":"%s"}%s', $key ? sprintf('"%s"', $key) : $i, $value, $comma);
 			$i++;
 		}
 		$properties .= "]";
