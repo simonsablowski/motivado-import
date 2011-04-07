@@ -220,6 +220,7 @@ class Importer extends Application {
 		return $Object;
 	}
 	
+	//TODO: somehow only the ObjectTransitions of the first LeftObject are saved
 	protected function registerTransition($transition) {
 		if (isset($this->ObjectTransitions[$id = (string)$transition->attributes()->Id])) {
 			return $this->ObjectTransitions[$id];
