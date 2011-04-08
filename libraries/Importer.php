@@ -70,6 +70,26 @@ class Importer extends Application {
 		$this->scanFile($path . $this->getConfiguration('startFileNameModeling'));
 	}
 	
+	protected function getPattern($type = NULL) {
+		switch ($type) {
+			default:
+			case 'NodeById':
+				return '//Activity[@Id="%1$s"]';
+			case 'TransitionFrom':
+				return '//Transition[@From="%1$s"]';
+			case 'TransitionTo':
+				return '//Transition[@To="%s"]';
+			case 'GatewayById':
+				return '|//Activity[@Id="%1$s"]/Route/parent::*';
+			case 'OptionById':
+				return '//Activity[@Id="%1$s"]/Implementation/Task/parent::*/parent::*';
+			case 'Start':
+				return '//Activity/Event/StartEvent/parent::*/parent::*';
+			case 'EndById':
+				return '|//Activity[@Id="%1$s"]/Event/EndEvent/parent::*/parent::*';
+		}
+	}
+	
 	protected function findTargetNode($pattern) {
 		if ($array = $this->getXmlBuffer()->xpath($pattern)) return pos($array);
 		return NULL;
@@ -80,7 +100,7 @@ class Importer extends Application {
 	}
 	
 	protected function findNodeById($id) {
-		return $this->findNode(sprintf('//Activity[@Id="%s"]', $id));
+		return $this->findNode(sprintf($this->getPattern('NodeById'), $id));
 	}
 	
 	protected function findNodesTransitions($node = NULL, $pattern = NULL) {
@@ -88,7 +108,7 @@ class Importer extends Application {
 			$node = $this->getNodePointer();
 		}
 		if (is_null($pattern)) {
-			$pattern = '//Transition[@From="%s"]';
+			$pattern = $this->getPattern('TransitionFrom');
 		}
 		$id = $node->attributes()->Id;
 		return $this->getXmlBuffer()->xpath(sprintf($pattern, $id));
@@ -96,16 +116,16 @@ class Importer extends Application {
 	
 	protected function findStartNode($pattern = NULL) {
 		if (is_null($pattern)) {
-			$pattern = '//Activity/Event/StartEvent/parent::*/parent::*';
+			$pattern = $this->getPattern('Start');
 		}
 		return $this->findNode($pattern);
 	}
 	
 	protected function findNextNodes($pattern = NULL) {
 		if (is_null($pattern)) {
-			$pattern = '//Activity[@Id="%1$s"]/Implementation/Task/parent::*/parent::*';
-			$pattern .= '|//Activity[@Id="%1$s"]/Route/parent::*';
-			$pattern .= '|//Activity[@Id="%1$s"]/Event/EndEvent/parent::*/parent::*';
+			$pattern = $this->getPattern('NodeById');
+			$pattern .= $this->getPattern('GatewayById');
+			$pattern .= $this->getPattern('EndById');
 		}
 		$nodes = array();
 		foreach ($this->findNodesTransitions() as $transition) {
@@ -134,7 +154,7 @@ class Importer extends Application {
 	}
 	
 	protected function handleOptions($node) {
-		$pattern = '//Activity[@Id="%s"]/Implementation/Task/parent::*/parent::*';
+		$pattern = $this->getPattern('OptionById');
 		$options = array();
 		foreach ($this->findNodesTransitions() as $transition) {
 			if ($option = $this->findTargetNode(sprintf($pattern, $transition->attributes()->To))) {
@@ -270,9 +290,9 @@ class Importer extends Application {
 		} else if ($node = $this->findNodeById($to)) {
 			if ($this->isNodeType($node, 'Gateway')) {
 				$result = FALSE;
-				foreach ($this->findNodesTransitions($node, '//Transition[@To="%s"]') as $transitionTo) {
-					foreach ($this->findNodesTransitions($node, '//Transition[@From="%s"]') as $transitionFrom) {
-						if ($descendant = $this->findTargetNode(sprintf('//Activity[@Id="%s"]', $transitionFrom->attributes()->To))) {
+				foreach ($this->findNodesTransitions($node, $this->getPattern('TransitionTo')) as $transitionTo) {
+					foreach ($this->findNodesTransitions($node, $this->getPattern('TransitionFrom')) as $transitionFrom) {
+						if ($descendant = $this->findTargetNode(sprintf($this->getPattern('NodeById'), $transitionFrom->attributes()->To))) {
 							if ($this->registerNode($descendant)) {
 								$transition = $transitionTo;
 								$transition->attributes()->To = $descendant->attributes()->Id;
@@ -285,16 +305,16 @@ class Importer extends Application {
 				return $result;
 			} else if ($this->isNodeType($node, 'Option')) {
 				$result = FALSE;
-				foreach ($this->findNodesTransitions($node, '//Transition[@To="%s"]') as $transitionTo) {
-					foreach ($this->findNodesTransitions($node, '//Transition[@From="%s"]') as $transitionFrom) {
-						if ($descendant = $this->findTargetNode(sprintf('//Activity[@Id="%s"]', $transitionFrom->attributes()->To))) {
+				foreach ($this->findNodesTransitions($node, $this->getPattern('TransitionTo')) as $transitionTo) {
+					foreach ($this->findNodesTransitions($node, $this->getPattern('TransitionFrom')) as $transitionFrom) {
+						if ($descendant = $this->findTargetNode(sprintf($this->getPattern('NodeById'), $transitionFrom->attributes()->To))) {
 							if ($this->registerNode($descendant)) {
 								$transition = $transitionTo;
 								$transition->attributes()->To = $descendant->attributes()->Id;
 								if (($Object = $this->Objects[(string)$transitionTo->attributes()->From]) && $Object->getType() != 'Options') {
 									throw new FatalError('Invalid option object', $this->abstractNode($node));
 								}
-								$transition->attributes()->Name = sprintf('%s is \'%s\'', $Object->getKey(), $transitionTo->attributes()->Name);
+								$transition->attributes()->Name = $this->getCondition($Object->getKey(), $transitionTo->attributes()->Name);
 								$result = $this->registerTransition($transition);
 							}
 						}
@@ -331,5 +351,9 @@ class Importer extends Application {
 		$this->pushOntoXmlStack(new SimpleXMLElement($data));
 		$this->findStartNode();
 		return $this->traverseNodes();
+	}
+	
+	protected function getCondition($key, $value, $operator = 'is') {
+		return sprintf('%s %s %s', $key, $operator, is_int($value) ? $value : sprintf('\'%s\'', $value));
 	}
 }
