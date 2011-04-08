@@ -51,6 +51,10 @@ body {
 	width: 90px;
 }
 
+#document .content .field ul {
+	margin-left: 24px;
+}
+
 #document .content input, #document .content select, #document .content textarea {
 	border: 1px solid #ccc;
 	padding: 0;

@@ -15,8 +15,18 @@
 				<tbody class="body">
 					<tr class="odd">
 						<td class="field">
-							<? echo /*$output*/$this->localize('Import completed successfully!'); ?>
+							<p>
+								<? echo $this->localize('Successfully imported:'); ?>
 
+							</p>
+							<ul>
+<? foreach ($Coachings as $n => $Coaching): ?>
+								<li>
+									<? echo $Coaching->getKey(); ?>
+
+								</li>
+							</ul>
+<? endforeach; ?>
 						</td>
 					</tr>
 				</tbody>
