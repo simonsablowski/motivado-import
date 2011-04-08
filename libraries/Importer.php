@@ -11,21 +11,12 @@ class Importer extends Application {
 		$this->setConfiguration($configuration);
 	}
 	
-	public function run($Coachings) {
-		foreach ($Coachings as $key) {
-			try {
-				$Coaching = Coaching::findByKey($key);
-			} catch (Error $Error) {
-				$Coaching = new Coaching(array(
-					'key' => $key
-				));
-				$Coaching->create();
-			}
-			$this->setCurrentCoaching($Coaching);
-			
-			$this->cleanTables();
-			$this->import($this->getCurrentCoaching()->getKey());
-		}
+	protected function setCurrentCoaching(Coaching $Coaching) {
+		return $this->Coachings[] = $Coaching;
+	}
+	
+	protected function getCurrentCoaching() {
+		return end($this->Coachings);
 	}
 	
 	//TODO: delete doesn't work
@@ -44,6 +35,46 @@ class Importer extends Application {
 		return $result;*/
 	}
 	
+	public function run($Coachings) {
+		foreach ($Coachings as $key) {
+			try {
+				$Coaching = Coaching::findByKey($key);
+			} catch (Error $Error) {
+				$Coaching = new Coaching(array(
+					'key' => $key
+				));
+				$Coaching->create();
+			}
+			$this->setCurrentCoaching($Coaching);
+			
+			$this->cleanTables();
+			$this->import($this->getCurrentCoaching()->getKey());
+		}
+	}
+	
+	protected function traverseNodes() {
+		if (!$this->getNodePointer()) return FALSE;
+		$nodes = $this->findNextNodes();
+		foreach ($nodes as $node) {
+			$this->setNodePointer($node);
+			return $this->traverseNodes();
+		}
+		return $nodes;
+	}
+	
+	protected function scanFile($pathFile) {
+		$data = preg_replace('/(xmlns=")(.+)(")/', '$1$3', file_get_contents($pathFile));
+		$this->pushOntoXmlStack(new SimpleXMLElement($data));
+		$this->findStartNode();
+		return $this->traverseNodes();
+	}
+	
+	protected function import($directory) {
+		$path = $this->getConfiguration('pathModeling') . $directory;
+		$path .= substr($path, -1) == '/' ? '' : '/';
+		$this->scanFile($path . $this->getConfiguration('startFileNameModeling'));
+	}
+	
 	protected function pushOntoXmlStack($element) {
 		return $this->xmlStack[] = $element;
 	}
@@ -54,20 +85,6 @@ class Importer extends Application {
 	
 	protected function getXmlBuffer() {
 		return $this->popOffXmlStack();
-	}
-	
-	protected function setCurrentCoaching(Coaching $Coaching) {
-		return $this->Coachings[] = $Coaching;
-	}
-	
-	protected function getCurrentCoaching() {
-		return end($this->Coachings);
-	}
-	
-	protected function import($directory) {
-		$path = $this->getConfiguration('pathModeling') . $directory;
-		$path .= substr($path, -1) == '/' ? '' : '/';
-		$this->scanFile($path . $this->getConfiguration('startFileNameModeling'));
 	}
 	
 	protected function getPattern($type = NULL) {
@@ -267,6 +284,10 @@ class Importer extends Application {
 		return $Object;
 	}
 	
+	protected function getCondition($key, $value, $operator = 'is') {
+		return sprintf('%s %s %s', $key, $operator, is_int($value) ? $value : sprintf('\'%s\'', $value));
+	}
+	
 	//TODO: somehow only the ObjectTransitions of the first LeftObject are saved
 	protected function registerTransition($transition) {
 		if (isset($this->ObjectTransitions[$id = (string)$transition->attributes()->Id])) {
@@ -334,26 +355,5 @@ class Importer extends Application {
 		$this->ObjectTransition[$id] = $ObjectTransition;
 		
 		return $ObjectTransition;
-	}
-	
-	protected function traverseNodes() {
-		if (!$this->getNodePointer()) return FALSE;
-		$nodes = $this->findNextNodes();
-		foreach ($nodes as $node) {
-			$this->setNodePointer($node);
-			return $this->traverseNodes();
-		}
-		return $nodes;
-	}
-	
-	protected function scanFile($pathFile) {
-		$data = preg_replace('/(xmlns=")(.+)(")/', '$1$3', file_get_contents($pathFile));
-		$this->pushOntoXmlStack(new SimpleXMLElement($data));
-		$this->findStartNode();
-		return $this->traverseNodes();
-	}
-	
-	protected function getCondition($key, $value, $operator = 'is') {
-		return sprintf('%s %s %s', $key, $operator, is_int($value) ? $value : sprintf('\'%s\'', $value));
 	}
 }
