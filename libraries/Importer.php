@@ -6,9 +6,11 @@ class Importer extends Application {
 	protected $ObjectTransitions = array();
 	protected $xmlStack = array();
 	protected $nodePointer;
+	protected $clearTables;
 	
 	public function __construct($configuration) {
 		$this->setConfiguration($configuration);
+		$this->setClearTables((bool)$this->getConfiguration('clearTables'));
 	}
 	
 	protected function setCurrentCoaching(Coaching $Coaching) {
@@ -17,6 +19,10 @@ class Importer extends Application {
 	
 	protected function getCurrentCoaching() {
 		return end($this->Coachings);
+	}
+	
+	protected function clearTables() {
+		return Database::query('TRUNCATE `object`') && Database::query('TRUNCATE `objecttransition`');
 	}
 	
 	protected function cleanTables() {
@@ -57,6 +63,10 @@ class Importer extends Application {
 	}
 	
 	public function run($Coachings) {
+		if ($this->isClearTables()) {
+			$this->clearTables();
+		}
+		
 		foreach ($Coachings as $key) {
 			try {
 				$Coaching = Coaching::findByKey($key);

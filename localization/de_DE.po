@@ -1,0 +1,54 @@
+# Importer
+
+msgid "Import"
+msgstr "Import"
+
+msgid "Successfully imported:"
+msgstr "Erfolgreich importiert:"
+
+msgid "%d objects:"
+msgstr "%d Objekte:"
+
+# Error
+
+msgid "Error"
+msgstr "Fehler"
+
+msgid "Unfortunately,"
+msgstr "Unglücklicherweise"
+
+msgid "we encountered an error:"
+msgstr "ist ein Fehler aufgetreten:"
+
+msgid "Type"
+msgstr "Typ"
+
+msgid "Fatal"
+msgstr "Fatal"
+
+msgid "Warning"
+msgstr "Warnung"
+
+msgid "Message"
+msgstr "Nachricht"
+
+msgid "Invalid controller"
+msgstr "Ungültiger Controller"
+
+msgid "No action defined"
+msgstr "Keine Action angegeben"
+
+msgid "Invalid action"
+msgstr "Ungültige Action"
+
+msgid "Missing parameters"
+msgstr "Fehlende Parameter"
+
+msgid "Record not found"
+msgstr "Datensatz nicht gefunden"
+
+msgid "Details"
+msgstr "Details"
+
+msgid "Trace"
+msgstr "Spur"
