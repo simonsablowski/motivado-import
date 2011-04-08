@@ -7,7 +7,7 @@
 				<thead class="head">
 					<tr>
 						<th class="field">
-							<? echo $this->localize('Output'); ?>
+							<? echo $this->localize('Import'); ?>
 
 						</th>
 					</tr>
@@ -25,8 +25,8 @@
 									<? echo $Coaching->getKey(); ?>
 
 								</li>
-							</ul>
 <? endforeach; ?>
+							</ul>
 						</td>
 					</tr>
 				</tbody>
