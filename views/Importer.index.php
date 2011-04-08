@@ -7,28 +7,38 @@
 				<thead class="head">
 					<tr>
 						<th class="field">
-							<? echo $this->localize('Import'); ?>
+							<? echo $this->localize('Successfully imported:'); ?>
 
 						</th>
 					</tr>
 				</thead>
 				<tbody class="body">
-					<tr class="odd">
-						<td class="field">
-							<p>
-								<? echo $this->localize('Successfully imported:'); ?>
-
-							</p>
-							<ul>
 <? foreach ($Coachings as $n => $Coaching): ?>
+					<tr class="<? echo $n % 2 ? 'odd' : 'even'; ?>">
+						<td class="field">
+							<ol>
 								<li>
-									<? echo $Coaching->getKey(); ?>
+									<p>
+										<? echo $Coaching->getKey(); ?>
 
-								</li>
+									</p>
+									<p>
+										<? echo $this->localize('%d objects:', count($Coaching->getObjects())); ?>
+
+									</p>
+									<ol>
+<? foreach ($Coaching->getObjects() as $Object): ?>
+										<li>
+											<? echo $Object->getType(); ?><? if ($title = $Object->getTitle()): ?>: <? echo $title; ?><? endif; ?>
+
+										</li>
 <? endforeach; ?>
-							</ul>
+									</ol>
+								</li>
+							</ol>
 						</td>
 					</tr>
+<? endforeach; ?>
 				</tbody>
 			</table>
 <? $this->displayView('components/footer.php'); ?>
