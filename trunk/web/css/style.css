@@ -55,8 +55,8 @@ body {
 	padding: 6px 0;
 }
 
-#document .content .field ul {
-	margin-left: 24px;
+#document .content .field ul, #document .content .field ol {
+	padding-left: 24px;
 }
 
 #document .content input, #document .content select, #document .content textarea {
