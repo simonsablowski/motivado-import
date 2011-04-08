@@ -35,29 +35,12 @@ class Importer extends Application {
 		return $result;*/
 	}
 	
-	public function run($Coachings) {
-		foreach ($Coachings as $key) {
-			try {
-				$Coaching = Coaching::findByKey($key);
-			} catch (Error $Error) {
-				$Coaching = new Coaching(array(
-					'key' => $key
-				));
-				$Coaching->create();
-			}
-			$this->setCurrentCoaching($Coaching);
-			
-			$this->cleanTables();
-			$this->import($this->getCurrentCoaching()->getKey());
-		}
-	}
-	
 	protected function traverseNodes() {
 		if (!$this->getNodePointer()) return FALSE;
 		$nodes = $this->findNextNodes();
 		foreach ($nodes as $node) {
 			$this->setNodePointer($node);
-			return $this->traverseNodes();
+			$nodes = array_merge($nodes, $this->traverseNodes());
 		}
 		return $nodes;
 	}
@@ -73,6 +56,23 @@ class Importer extends Application {
 		$path = $this->getConfiguration('pathModeling') . $directory;
 		$path .= substr($path, -1) == '/' ? '' : '/';
 		$this->scanFile($path . $this->getConfiguration('startFileNameModeling'));
+	}
+	
+	public function run($Coachings) {
+		foreach ($Coachings as $key) {
+			try {
+				$Coaching = Coaching::findByKey($key);
+			} catch (Error $Error) {
+				$Coaching = new Coaching(array(
+					'key' => $key
+				));
+				$Coaching->create();
+			}
+			$this->setCurrentCoaching($Coaching);
+			
+			$this->cleanTables();
+			$this->import($this->getCurrentCoaching()->getKey());
+		}
 	}
 	
 	protected function pushOntoXmlStack($element) {
@@ -95,7 +95,7 @@ class Importer extends Application {
 			case 'TransitionFrom':
 				return '//Transition[@From="%1$s"]';
 			case 'TransitionTo':
-				return '//Transition[@To="%s"]';
+				return '//Transition[@To="%1$s"]';
 			case 'GatewayById':
 				return '|//Activity[@Id="%1$s"]/Route/parent::*';
 			case 'OptionById':
@@ -288,7 +288,6 @@ class Importer extends Application {
 		return sprintf('%s %s %s', $key, $operator, is_int($value) ? $value : sprintf('\'%s\'', $value));
 	}
 	
-	//TODO: somehow only the ObjectTransitions of the first LeftObject are saved
 	protected function registerTransition($transition) {
 		if (isset($this->ObjectTransitions[$id = (string)$transition->attributes()->Id])) {
 			return $this->ObjectTransitions[$id];
