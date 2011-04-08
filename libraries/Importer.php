@@ -19,20 +19,18 @@ class Importer extends Application {
 		return end($this->Coachings);
 	}
 	
-	//TODO: delete doesn't work
 	protected function cleanTables() {
-		return Database::query('TRUNCATE `object`') && Database::query('TRUNCATE `objecttransition`');
-		/*$condition = array(
+		$condition = array(
 			'CoachingId' => $this->getCurrentCoaching()->getId()
 		);
-		$result = FALSE;
+		$result = TRUE;
 		foreach (Object::findAll($condition) as $Object) {
 			$result = $result && $Object->delete();
 		}
 		foreach (ObjectTransition::findAll($condition) as $ObjectTransition) {
 			$result = $result && $ObjectTransition->delete();
 		}
-		return $result;*/
+		return $result;
 	}
 	
 	protected function traverseNodes() {
