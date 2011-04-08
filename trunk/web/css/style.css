@@ -51,6 +51,10 @@ body {
 	width: 90px;
 }
 
+#document .content .field p {
+	padding: 6px 0;
+}
+
 #document .content .field ul {
 	margin-left: 24px;
 }
