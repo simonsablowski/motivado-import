@@ -11,7 +11,7 @@
 				<table class="content">
 					<thead class="head">
 						<tr>
-							<th class="field">
+							<th class="field" colspan="2">
 								<input id="check-all" class="checkbox check-all" type="checkbox" name="checkAll" value="yes"/>
 								<label for="check-all">
 									<? echo $this->localize('Directories'); ?>
@@ -25,8 +25,11 @@
 								<td class="field data">
 									<input id="checkbox<? echo $key; ?>" class="checkbox" type="checkbox" name="keys[]" value="<? echo $key; ?>"/>
 									<label for="checkbox<? echo $key; ?>">
-										<? echo $key; ?> <em>(<? echo $directory; ?>)</em>
+										<? echo $key; ?>
 									</label>
+								</td>
+								<td class="wide field">
+									<small><? echo $directory; ?></small>
 								</td>
 							</tr>
 <? endforeach; ?>
