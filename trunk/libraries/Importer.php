@@ -65,12 +65,24 @@ class Importer extends Application {
 		$this->scanFile($path . $this->getConfiguration('startFileNameModeling'));
 	}
 	
+	protected function validate($type, $value) {
+		switch ($type) {
+			case 'CoachingKey':
+				if (preg_match('/[^a-z0-9-]/', $value)) {
+					throw new FatalError('Invalid coaching key', $value);
+				}
+				return TRUE;
+		}
+	}
+	
 	public function run($Coachings) {
 		if ($this->isClearTables()) {
 			$this->clearTables();
 		}
 		
 		foreach ($Coachings as $key) {
+			$this->validate('CoachingKey', $key);
+			
 			try {
 				$Coaching = Coaching::findByKey($key);
 			} catch (Error $Error) {
