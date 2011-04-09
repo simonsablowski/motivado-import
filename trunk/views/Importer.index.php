@@ -36,7 +36,7 @@
 					</tbody>
 					<tfoot class="foot">
 						<tr>
-							<td class="field">
+							<td class="field" colspan="2">
 								<input class="submit" type="submit" name="submit" value="<? echo $this->localize('Import'); ?>"/>
 							</td>
 						</tr>
