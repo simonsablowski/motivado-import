@@ -46,19 +46,6 @@ body {
 	width: 100%;
 }
 
-#document .content .field {
-	padding-left: 24px;
-	width: 90px;
-}
-
-#document .content .field p {
-	padding: 6px 0;
-}
-
-#document .content .field ul, #document .content .field ol {
-	padding-left: 24px;
-}
-
 #document .content input, #document .content select, #document .content textarea {
 	border: 1px solid #ccc;
 	padding: 0;
@@ -80,9 +67,26 @@ body {
 	background-color: #f6f6f6;
 }
 
+#document .content .field {
+	padding-left: 24px;
+	width: 90px;
+}
+
+#document .content .field p {
+	padding: 6px 0;
+}
+
+#document .content .field ul, #document .content .field ol {
+	padding-left: 24px;
+}
+
 #document .content .number {
 	padding-left: 24px;
 	width: 24px;
+}
+
+#document .content .main {
+	width: 40%;
 }
 
 #document .content .data {
