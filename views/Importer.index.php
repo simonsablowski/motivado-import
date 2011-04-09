@@ -1,4 +1,6 @@
 <? $this->displayView('components/header.php', array('title' => 'Import')); ?>
+			<script type="text/javascript" src="web/js/jquery-1.4.2.min.js"></script>
+			<script type="text/javascript" src="web/js/importer.js"></script>
 			<h1>
 				<a href="Importer/index" title="<? echo $this->localize('Import'); ?>"><? echo $this->localize('Import'); ?></a>
 			</h1>
@@ -16,14 +18,14 @@
 				</thead>
 				<tbody class="body">
 <? foreach ($Coachings as $n => $Coaching): ?>
-					<tr class="divider">
+					<tr id="group<? echo $n + 1; ?>" class="divider">
 						<td class="field data" colspan="5">
 							<? echo $Coaching->getKey(); ?> (<? echo $this->localize('%d objects', count($Coaching->getObjects())); ?>)
 
 						</td>
 					</tr>
 <? foreach ($Coaching->getObjects() as $m => $Object): ?>
-					<tr class="<? echo $m % 2 ? 'even' : 'odd'; ?>">
+					<tr class="<? echo $m % 2 ? 'even' : 'odd'; ?> group<? echo $n + 1; ?>">
 						<td class="<? if ($m + 1 == count($Coaching->getObjects())): ?>last <? endif; ?>number field">
 							<? echo $m + 1; ?>
 

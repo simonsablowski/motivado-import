@@ -117,3 +117,15 @@ body {
 	border: 1px solid #999;
 	padding: 6px 6px 9px;
 }
+
+#document .content .expand, #document .content .collapse {
+	background: no-repeat 5px 8px;
+}
+
+#document .content .expand {
+	background-image: url('../img/expand.gif');
+}
+
+#document .content .collapse {
+	background-image: url('../img/collapse.gif');
+}
