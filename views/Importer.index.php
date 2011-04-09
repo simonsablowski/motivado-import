@@ -14,7 +14,7 @@
 				</thead>
 				<tbody class="body">
 <? foreach ($Coachings as $n => $Coaching): ?>
-					<tr>
+					<tr class="divider">
 						<td class="field data" colspan="5">
 							<? echo $Coaching->getKey(); ?> (<? echo $this->localize('%d objects', count($Coaching->getObjects())); ?>)
 
