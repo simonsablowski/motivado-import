@@ -3,8 +3,11 @@
 msgid "Import"
 msgstr "Import"
 
-msgid "Successfully imported:"
-msgstr "Erfolgreich importiert:"
+msgid "Objects"
+msgstr "Objekte"
+
+msgid "Coachings"
+msgstr "Coachings"
 
 msgid "%d objects"
 msgstr "%d Objekte"
@@ -19,6 +22,12 @@ msgstr "Unglücklicherweise"
 
 msgid "we encountered an error:"
 msgstr "ist ein Fehler aufgetreten:"
+
+msgid "Field"
+msgstr "Feld"
+
+msgid "Value"
+msgstr "Wert"
 
 msgid "Type"
 msgstr "Typ"

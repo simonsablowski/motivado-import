@@ -6,7 +6,9 @@ $configuration['pathApplication'] = dirname(__FILE__) . '/';
 
 $configuration['pathApi'] = 'D:/Webprojekte/motivado/api/';
 
-$configuration['basePath'] = 'http://localhost/motivado/importer/';
+$configuration['baseUrl'] = 'http://localhost/motivado/importer/';
+
+$configuration['cheeseUrl'] = 'http://localhost/cheese/';
 
 $configuration['includeDirectories'] = array(
 	$configuration['pathApplication'],

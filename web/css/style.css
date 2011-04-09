@@ -38,6 +38,20 @@ body {
 	text-decoration: none;
 }
 
+#document .options {
+	background-color: #f9f9f9;
+	border: 1px solid #f0f0f0;
+	position: absolute;
+	right: 0;
+	top: 0;
+}
+
+#document .options .option {
+	float: right;
+	padding: 6px 6px 9px;
+	width: 60px;
+}
+
 #document .content {
 	border: 1px solid #ccc;
 	float: left;

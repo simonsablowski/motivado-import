@@ -4,7 +4,7 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 		<meta http-equiv="Content-Language" content="en"/>
 		<title><? echo $this->localize($title); ?></title>
-		<base href="<? echo $this->getApplication()->getConfiguration('basePath'); ?>"/>
+		<base href="<? echo $this->getApplication()->getConfiguration('baseUrl'); ?>"/>
 		<link href="web/css/style.css" rel="stylesheet" title="Default" type="text/css" />
 	</head>
 	<body>

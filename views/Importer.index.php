@@ -1,13 +1,15 @@
 <? $this->displayView('components/header.php', array('title' => 'Import')); ?>
 			<h1>
-				<? echo $this->localize('Import'); ?>
-
+				<a href="Importer/index" title="<? echo $this->localize('Import'); ?>"><? echo $this->localize('Import'); ?></a>
 			</h1>
+			<div class="options">
+				<a class="option" href="<? echo $this->getConfiguration('cheeseUrl'); ?>" title="<? echo $this->localize('Objects'); ?>"><? echo $this->localize('Objects'); ?></a>
+			</div>
 			<table class="content">
 				<thead class="head">
 					<tr>
 						<th class="field" colspan="5">
-							<? echo $this->localize('Successfully imported:'); ?>
+							<? echo $this->localize('Coachings'); ?>
 
 						</th>
 					</tr>
