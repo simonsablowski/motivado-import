@@ -12,7 +12,7 @@ class ImporterController extends Controller {
 	}
 	
 	protected function getImportDirectories($baseDirectory = NULL) {
-		if (is_null($baseDirectory)) $baseDirectory = $this->getConfiguration('pathModeling');
+		if (is_null($baseDirectory)) $baseDirectory = str_replace('\\', '/', $this->getConfiguration('pathModeling'));
 		
 		$directories = array();
 		$base = dir($baseDirectory);
