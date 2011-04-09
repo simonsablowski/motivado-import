@@ -6,8 +6,8 @@ msgstr "Import"
 msgid "Successfully imported:"
 msgstr "Erfolgreich importiert:"
 
-msgid "%d objects:"
-msgstr "%d Objekte:"
+msgid "%d objects"
+msgstr "%d Objekte"
 
 # Error
 
@@ -15,7 +15,7 @@ msgid "Error"
 msgstr "Fehler"
 
 msgid "Unfortunately,"
-msgstr "Unglücklicherweise"
+msgstr "UnglÃ¼cklicherweise"
 
 msgid "we encountered an error:"
 msgstr "ist ein Fehler aufgetreten:"
@@ -33,13 +33,13 @@ msgid "Message"
 msgstr "Nachricht"
 
 msgid "Invalid controller"
-msgstr "Ungültiger Controller"
+msgstr "UngÃ¼ltiger Controller"
 
 msgid "No action defined"
 msgstr "Keine Action angegeben"
 
 msgid "Invalid action"
-msgstr "Ungültige Action"
+msgstr "UngÃ¼ltige Action"
 
 msgid "Missing parameters"
 msgstr "Fehlende Parameter"

@@ -80,6 +80,16 @@ body {
 	background-color: #f6f6f6;
 }
 
+#document .content .number {
+	padding-left: 24px;
+	width: 24px;
+}
+
+#document .content .data {
+	clear: both;
+	font-weight: bold;
+}
+
 #document .content .highlight {
 	background-color: #fff;
 	border: 1px solid #999;
