@@ -12,12 +12,20 @@
 	border: 1px solid #ccc;
 }
 
+#document .content .wide {
+	width: 85%;
+}
+
 #document .content .field p {
 	padding: 6px 0;
 }
 
 #document .content .field ul, #document .content .field ol {
 	padding-left: 24px;
+}
+
+#document .content .field .offset {
+	margin-left: 12px;
 }
 
 #document .content .main {
