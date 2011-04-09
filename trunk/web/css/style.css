@@ -1,5 +1,7 @@
 #document .content .checkbox {
 	margin-right: 12px;
+	position: relative;
+	top: 2px;
 }
 
 #document .content .checkbox, #document .content label, #document .content .submit {
