@@ -22,15 +22,15 @@
 					</tr>
 <? foreach ($Coaching->getObjects() as $m => $Object): ?>
 					<tr class="<? echo $m % 2 ? 'even' : 'odd'; ?>">
-						<td class="<? if ($m + 1 == count($Coaching->getObjects())): ?>last <? endif; ?>number">
+						<td class="<? if ($m + 1 == count($Coaching->getObjects())): ?>last <? endif; ?>number field">
 							<? echo $m + 1; ?>
 
 						</td>
-						<td class="field data">
+						<td class="data field">
 							<? echo $Object->getType(); ?>
 
 						</td>
-						<td class="field data">
+						<td class="data field">
 							<? echo $Object->getKey(); ?>
 
 						</td>
@@ -38,7 +38,7 @@
 							<? if ($title = $Object->getTitle()): ?><? echo $title; ?><? else: ?><? echo $Object->getDescription(); ?><? endif; ?>
 
 						</td>
-						<td class="field">
+						<td class="main field">
 <? $this->displayView('components/StdObject.php', array(
 	'StdObject' => Json::decode($Object->getProperties()),
 	'indent' => 7
