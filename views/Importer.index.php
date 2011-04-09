@@ -12,8 +12,10 @@
 					<thead class="head">
 						<tr>
 							<th class="field">
-								<? echo $this->localize('Directories'); ?>
-
+								<input id="check-all" class="checkbox check-all" type="checkbox" name="checkAll" value="yes"/>
+								<label for="check-all">
+									<? echo $this->localize('Directories'); ?>
+								</label>
 							</th>
 						</tr>
 					</thead>
@@ -21,7 +23,7 @@
 <? foreach ($Coachings as $key => $directory): ?>
 							<tr id="group<? echo $key; ?>" class="divider">
 								<td class="field data">
-									<input id="checkbox<? echo $key; ?>" class="checkbox" type="checkbox" name="keys[]" value="<? echo $key; ?>" value="yes"/>
+									<input id="checkbox<? echo $key; ?>" class="checkbox" type="checkbox" name="keys[]" value="<? echo $key; ?>"/>
 									<label for="checkbox<? echo $key; ?>">
 										<? echo $key; ?> <em>(<? echo $directory; ?>)</em>
 									</label>
