@@ -22,7 +22,10 @@ class Importer extends Application {
 	}
 	
 	protected function clearTables() {
-		return Database::query('TRUNCATE `object`') && Database::query('TRUNCATE `objecttransition`');
+		if (Database::query('TRUNCATE `coaching`') &&
+			Database::query('TRUNCATE `object`')) {
+			return Database::query('TRUNCATE `objecttransition`');
+		}
 	}
 	
 	protected function cleanTables() {

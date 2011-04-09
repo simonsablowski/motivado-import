@@ -32,7 +32,7 @@
 					<tfoot class="foot">
 						<tr>
 							<td class="field">
-								<input type="submit" name="submit" value="<? echo $this->localize('Import'); ?>"/>
+								<input class="submit" type="submit" name="submit" value="<? echo $this->localize('Import'); ?>"/>
 							</td>
 						</tr>
 					</tfoot>
