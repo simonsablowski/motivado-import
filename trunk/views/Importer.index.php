@@ -7,51 +7,35 @@
 			<div class="options">
 				<a class="option" href="<? echo $this->getConfiguration('cheeseUrl'); ?>" title="<? echo $this->localize('Objects'); ?>"><? echo $this->localize('Objects'); ?></a>
 			</div>
-			<table class="content">
-				<thead class="head">
-					<tr>
-						<th class="field" colspan="5">
-							<? echo $this->localize('Coachings'); ?>
+			<form action="<? echo $this->getConfiguration('baseUrl'); ?>Importer/import" method="post">
+				<table class="content">
+					<thead class="head">
+						<tr>
+							<th class="field">
+								<? echo $this->localize('Directories'); ?>
 
-						</th>
-					</tr>
-				</thead>
-				<tbody class="body">
-<? foreach ($Coachings as $n => $Coaching): ?>
-					<tr id="group<? echo $n + 1; ?>" class="divider">
-						<td class="field data" colspan="5">
-							<? echo $Coaching->getKey(); ?> (<? echo $this->localize('%d objects', count($Coaching->getObjects())); ?>)
-
-						</td>
-					</tr>
-<? foreach ($Coaching->getObjects() as $m => $Object): ?>
-					<tr class="<? echo $m % 2 ? 'even' : 'odd'; ?> group<? echo $n + 1; ?>">
-						<td class="<? if ($m + 1 == count($Coaching->getObjects())): ?>last <? endif; ?>number field">
-							<? echo $m + 1; ?>
-
-						</td>
-						<td class="data field">
-							<? echo $Object->getType(); ?>
-
-						</td>
-						<td class="data field">
-							<? echo $Object->getKey(); ?>
-
-						</td>
-						<td class="field">
-							<? if ($title = $Object->getTitle()): ?><? echo $title; ?><? else: ?><? echo $Object->getDescription(); ?><? endif; ?>
-
-						</td>
-						<td class="main field">
-<? $this->displayView('components/StdObject.php', array(
-	'StdObject' => Json::decode($Object->getProperties()),
-	'indent' => 7
-)); ?>
-						</td>
-					</tr>
+							</th>
+						</tr>
+					</thead>
+					<tbody class="body">
+<? foreach ($Coachings as $key => $directory): ?>
+							<tr id="group<? echo $key; ?>" class="divider">
+								<td class="field data">
+									<input id="checkbox<? echo $key; ?>" class="checkbox" type="checkbox" name="keys[]" value="<? echo $key; ?>" value="yes"/>
+									<label for="checkbox<? echo $key; ?>">
+										<? echo $key; ?> <em>(<? echo $directory; ?>)</em>
+									</label>
+								</td>
+							</tr>
 <? endforeach; ?>
-					</tr>
-<? endforeach; ?>
-				</tbody>
-			</table>
+					</tbody>
+					<tfoot class="foot">
+						<tr>
+							<td class="field">
+								<input type="submit" name="submit" value="<? echo $this->localize('Import'); ?>"/>
+							</td>
+						</tr>
+					</tfoot>
+				</table>
+			</form>
 <? $this->displayView('components/footer.php'); ?>
