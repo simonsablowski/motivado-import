@@ -245,7 +245,7 @@ class Importer extends Application {
 	
 	protected function abstractNode($node) {
 		return array_map(function($node) {
-			foreach ($node as $key => $value) {
+			foreach ((array)$node as $key => $value) {
 				$node[$key] = $value != ($v = substr($value, 0, 200)) ? $v . '...' : $value;
 			}
 			return $node;
@@ -262,7 +262,11 @@ class Importer extends Application {
 		
 		if ($this->isNodeType($node)) {
 			list($type, $key, $properties, $description) = $this->handleObject($node);
-			$properties = Json::decode(sprintf('{%s}', $properties));
+			if ($properties) {
+				if (!$properties = Json::decode(sprintf('{%s}', $properties))) {
+					throw new FatalError('Invalid JSON code', $this->abstractNode($node));
+				}
+			}
 		} else if ($this->isNodeType($node, 'Options')) {
 			$type = 'Options';
 			list($key, $properties) = $this->handleOptions($node);

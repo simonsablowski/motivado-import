@@ -67,6 +67,10 @@ body {
 	background-color: #f6f6f6;
 }
 
+#document .content .divider {
+	border: 1px solid #ccc;
+}
+
 #document .content .field {
 	padding-left: 24px;
 	width: 90px;
