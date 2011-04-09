@@ -65,6 +65,14 @@ body {
 	padding: 0;
 }
 
+#document .content .checkbox {
+	margin-right: 12px;
+}
+
+#document .content .checkbox, #document .content label, #document .content .submit {
+	cursor: pointer;
+}
+
 #document .content .head {
 	background-color: #777;
 }

@@ -1,5 +1,5 @@
 $(function() {
-	$('.body > tr.divider')
+	$('.import > tr.divider')
 		.toggleClass('expand')
 		.css('cursor', 'pointer')
 		.click(function() {
@@ -7,5 +7,5 @@ $(function() {
 			$(this).toggleClass('expand')
 			$(this).toggleClass('collapse');
 	});
-	$('.body > tr:not(.divider)').hide();
+	$('.import > tr:not(.divider)').hide();
 });

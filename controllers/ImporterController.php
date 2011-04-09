@@ -34,11 +34,25 @@ class ImporterController extends Controller {
 	}
 	
 	public function index() {
-		$this->setup();
-		$keys = array_keys($this->getImportDirectories());
-		$this->getImporter()->run($keys);
+		if ($this->getRequest()->getData('submit')) {
+			return $this->import();
+		}
 		
 		return $this->displayView('Importer.index.php', array(
+			'Coachings' => $this->getImportDirectories()
+		));
+	}
+	
+	public function import() {
+		$this->setup();
+		
+		if (!$keys = $this->getRequest()->getData('keys')) {
+			$keys = array_keys($this->getImportDirectories());
+		}
+		
+		$this->getImporter()->run($keys);
+		
+		return $this->displayView('Importer.import.php', array(
 			'Coachings' => $this->getImporter()->getCoachings()
 		));
 	}
