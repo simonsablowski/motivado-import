@@ -67,7 +67,7 @@ class Importer extends Application {
 	protected function import($directory) {
 		$path = $this->getConfiguration('pathModeling') . $directory;
 		$path .= substr($path, -1) == '/' ? '' : '/';
-		$this->scanFile($path . $this->getConfiguration('startFileNameModeling'));
+		return $this->scanFile($path . $this->getConfiguration('startFileNameModeling'));
 	}
 	
 	protected function validate($type, $value) {
@@ -115,23 +115,26 @@ class Importer extends Application {
 		return $this->popOffXmlStack();
 	}
 	
-	protected function getPattern($type = NULL) {
+	protected function getPattern($type) {
 		switch ($type) {
-			default:
 			case 'NodeById':
 				return '//Activity[@Id="%1$s"]';
 			case 'TransitionFrom':
 				return '//Transition[@From="%1$s"]';
 			case 'TransitionTo':
 				return '//Transition[@To="%1$s"]';
-			case 'GatewayById':
-				return '|//Activity[@Id="%1$s"]/Route/parent::*';
+			case 'SetById':
+				return '//ActivitySet[@Id="%1$s"]';
+			case 'SetByIdStart':
+				return sprintf('//%s/Activities/Activity/Event/StartEvent/parent::*/parent::*', $this->getPattern('SetById'));
+			case 'SplitterById':
+				return '//Activity[@Id="%1$s"]/Route/parent::*';
 			case 'OptionById':
 				return '//Activity[@Id="%1$s"]/Implementation/Task/parent::*/parent::*';
 			case 'Start':
-				return '//Activity/Event/StartEvent/parent::*/parent::*';
+				return '//WorkflowProcess/Activities/Activity/Event/StartEvent/parent::*/parent::*';
 			case 'EndById':
-				return '|//Activity[@Id="%1$s"]/Event/EndEvent/parent::*/parent::*';
+				return '//Activity[@Id="%1$s"]/Event/EndEvent/parent::*/parent::*';
 		}
 	}
 	
@@ -169,8 +172,8 @@ class Importer extends Application {
 	protected function findNextNodes($pattern = NULL) {
 		if (is_null($pattern)) {
 			$pattern = $this->getPattern('NodeById');
-			$pattern .= $this->getPattern('GatewayById');
-			$pattern .= $this->getPattern('EndById');
+			$pattern .= '|' . $this->getPattern('SplitterById');
+			$pattern .= '|' . $this->getPattern('EndById');
 		}
 		$nodes = array();
 		foreach ($this->findNodesTransitions() as $transition) {
@@ -250,26 +253,26 @@ class Importer extends Application {
 				return isset($node->Implementation->Task->TaskReference);
 			case 'Text':
 				return isset($node->Implementation->Task->TaskScript);
-			case 'Gateway':
+			case 'Set':
+				return isset($node->BlockActivity) &&
+					($setId = $node->BlockActivity->attributes()->ActivitySetId) &&
+					$this->findTargetNode(sprintf($this->getPattern('SetById'), $setId));
+			case 'Splitter':
 				return isset($node->Route);
 			case 'Option':
 				return isset($node->Implementation->Task) &&
 					!$this->isNodeType($node) &&
 					!$this->isNodeType($node, 'Options') &&
 					!$this->isNodeType($node, 'Text') &&
-					!$this->isNodeType($node, 'Gateway');
+					!$this->isNodeType($node, 'Set') &&
+					!$this->isNodeType($node, 'Splitter');
 			case 'End':
 				return isset($node->Event->EndEvent);
 		}
 	}
 	
 	protected function abstractNode($node) {
-		return array_map(function($node) {
-			foreach ((array)$node as $key => $value) {
-				$node[$key] = $value != ($v = substr($value, 0, 200)) ? $v . '...' : $value;
-			}
-			return $node;
-		}, array_slice((array)$node, 0, 3));
+		return array_slice((array)$node, 0, 3);
 	}
 	
 	protected function registerNode($node) {
@@ -294,7 +297,8 @@ class Importer extends Application {
 		} else if ($this->isNodeType($node, 'Text')) {
 			$type = 'Text';
 			list($title, $description) = $this->handleText($node);
-		} else if ($this->isNodeType($node, 'Gateway') ||
+		} else if ($this->isNodeType($node, 'Set') ||
+					$this->isNodeType($node, 'Splitter') ||
 					$this->isNodeType($node, 'Option') ||
 					$this->isNodeType($node, 'End')) {
 			return TRUE;
@@ -332,7 +336,7 @@ class Importer extends Application {
 		if (isset($this->Objects[$from = (string)$transition->attributes()->From])) {
 			$LeftId = $this->Objects[$from]->getId();
 		} else if ($node = $this->findNodeById($from)) {
-			if ($this->isNodeType($node, 'Gateway') || $this->isNodeType($node, 'Option')) {
+			if ($this->isNodeType($node, 'Splitter') || $this->isNodeType($node, 'Option')) {
 				return FALSE;
 			}
 		}
@@ -340,8 +344,32 @@ class Importer extends Application {
 		if (isset($this->Objects[$to = (string)$transition->attributes()->To])) {
 			$RightId = $this->Objects[$to]->getId();
 		} else if ($node = $this->findNodeById($to)) {
-			if ($this->isNodeType($node, 'Gateway')) {
-				$result = FALSE;
+			if ($this->isNodeType($node, 'Set')) {
+				$result = TRUE;
+				foreach ($this->findNodesTransitions($node, $this->getPattern('TransitionTo')) as $transitionTo) {
+					if ($ancestor = $this->findTargetNode(sprintf($this->getPattern('NodeById'), $transitionTo->attributes()->From))) {
+						if ($this->registerNode($ancestor)) {
+							$setId = $node->BlockActivity->attributes()->ActivitySetId;
+							if (!$start = $this->findStartNode(sprintf($this->getPattern('SetByIdStart'), $setId))) {
+								throw new FatalError('No start node defined', $this->abstractNode($node));
+							}
+							$this->traverseNodes();
+							foreach ($this->findNodesTransitions($node, $this->getPattern('TransitionFrom')) as $transitionFrom) {
+								if ($descendant = $this->findTargetNode(sprintf($this->getPattern('NodeById'), $transitionFrom->attributes()->To))) {
+									if ($this->registerNode($descendant)) {
+										$transition = $transitionTo;
+										$transition->attributes()->To = $descendant->attributes()->Id;
+										$transition->attributes()->Name = $transitionFrom->attributes()->Name;
+										$result = $result && $this->registerTransition($transition);
+									}
+								}
+							}
+						}
+					}
+				}
+				return $result;
+			} else if ($this->isNodeType($node, 'Splitter')) {
+				$result = TRUE;
 				foreach ($this->findNodesTransitions($node, $this->getPattern('TransitionTo')) as $transitionTo) {
 					foreach ($this->findNodesTransitions($node, $this->getPattern('TransitionFrom')) as $transitionFrom) {
 						if ($descendant = $this->findTargetNode(sprintf($this->getPattern('NodeById'), $transitionFrom->attributes()->To))) {
@@ -349,14 +377,14 @@ class Importer extends Application {
 								$transition = $transitionTo;
 								$transition->attributes()->To = $descendant->attributes()->Id;
 								$transition->attributes()->Name = $transitionFrom->attributes()->Name;
-								$result = $this->registerTransition($transition);
+								$result = $result && $this->registerTransition($transition);
 							}
 						}
 					}
 				}
 				return $result;
 			} else if ($this->isNodeType($node, 'Option')) {
-				$result = FALSE;
+				$result = TRUE;
 				foreach ($this->findNodesTransitions($node, $this->getPattern('TransitionTo')) as $transitionTo) {
 					foreach ($this->findNodesTransitions($node, $this->getPattern('TransitionFrom')) as $transitionFrom) {
 						if ($descendant = $this->findTargetNode(sprintf($this->getPattern('NodeById'), $transitionFrom->attributes()->To))) {
@@ -367,7 +395,7 @@ class Importer extends Application {
 									throw new FatalError('Invalid option object', $this->abstractNode($node));
 								}
 								$transition->attributes()->Name = $this->getCondition($Object->getKey(), $transitionTo->attributes()->Name);
-								$result = $this->registerTransition($transition);
+								$result = $result && $this->registerTransition($transition);
 							}
 						}
 					}
