@@ -42,9 +42,12 @@ class Importer extends Application {
 		return $result;
 	}
 	
-	protected function traverseNodes() {
-		if (!$this->getNodePointer()) return FALSE;
-		$nodes = $this->findNextNodes();
+	protected function traverseNodes($node = NULL) {
+		if (is_null($node)) {
+			$node = $this->getNodePointer();
+		}
+		if (!$node) return FALSE;
+		$nodes = $this->findNextNodes(NULL, $node);
 		foreach ($nodes as $node) {
 			$this->setNodePointer($node);
 			$nodes = array_merge($nodes, $this->traverseNodes());
@@ -168,18 +171,21 @@ class Importer extends Application {
 		return $this->findNode($pattern);
 	}
 	
-	protected function findNextNodes($pattern = NULL) {
+	protected function findNextNodes($pattern = NULL, $node = NULL) {
 		if (is_null($pattern)) {
 			$pattern = $this->getPattern('NodeById');
 			$pattern .= '|' . $this->getPattern('SplitterById');
 			$pattern .= '|' . $this->getPattern('EndById');
 		}
+		if (is_null($node)) {
+			$node = $this->getNodePointer();
+		}
 		$nodes = array();
-		foreach ($this->findNodesTransitions() as $transition) {
-			if ($node = $this->findTargetNode(sprintf($pattern, $this->getNodeProperty('to', $transition)))) {
-				if ($this->registerNode($node)) {
+		foreach ($this->findNodesTransitions($node) as $transition) {
+			if ($descendant = $this->findTargetNode(sprintf($pattern, $this->getNodeProperty('to', $transition)))) {
+				if ($this->registerNode($descendant)) {
 					$this->registerTransition($transition);
-					$nodes[] = $node;
+					$nodes[] = $descendant;
 				}
 			}
 		}
@@ -366,19 +372,20 @@ class Importer extends Application {
 	
 	protected function handleSetTransitions($node) {
 		$result = TRUE;
+		$setId = $this->getNodeProperty('setId', $node);
+		if (!$start = $this->findStartNode(sprintf($this->getPattern('SetByIdStart'), $setId))) {
+			throw new FatalError('No start node defined', $this->abstractNode($node));
+		}
 		foreach ($this->findNodesTransitions($node, $this->getPattern('TransitionTo')) as $transitionTo) {
 			$from = $this->getNodeProperty('from', $transitionTo);
 			if (($ancestor = $this->findTargetNode(sprintf($this->getPattern('NodeById'), $from))) &&
-				$this->registerNode($ancestor)) {
-				$setId = $this->getNodeProperty('setId', $node);
-				if (!$start = $this->findStartNode(sprintf($this->getPattern('SetByIdStart'), $setId))) {
-					throw new FatalError('No start node defined', $this->abstractNode($node));
-				}
-				$this->traverseNodes();
+					$this->registerNode($ancestor)) {
+				$this->setNodePointer($node);
+				$this->traverseNodes($start);
 				foreach ($this->findNodesTransitions($node, $this->getPattern('TransitionFrom')) as $transitionFrom) {
 					$to = $this->getNodeProperty('to', $transitionFrom);
 					if (($descendant = $this->findTargetNode(sprintf($this->getPattern('NodeById'), $to))) &&
-						$this->registerNode($descendant)) {
+							$this->registerNode($descendant)) {
 						$transition = $transitionTo;
 						$this->setNodeProperty('to', $this->getNodeProperty('id', $descendant), $transition);
 						$condition = $this->getNodeProperty('condition', $transitionFrom);
@@ -397,7 +404,7 @@ class Importer extends Application {
 			foreach ($this->findNodesTransitions($node, $this->getPattern('TransitionFrom')) as $transitionFrom) {
 				$to = $this->getNodeProperty('to', $transitionFrom);
 				if (($descendant = $this->findTargetNode(sprintf($this->getPattern('NodeById'), $to))) &&
-					$this->registerNode($descendant)) {
+						$this->registerNode($descendant)) {
 					$transition = $transitionTo;
 					$this->setNodeProperty('to', $this->getNodeProperty('id', $descendant), $transition);
 					$condition = $this->getNodeProperty('condition', $transitionFrom);
@@ -415,14 +422,15 @@ class Importer extends Application {
 			foreach ($this->findNodesTransitions($node, $this->getPattern('TransitionFrom')) as $transitionFrom) {
 				$to = $this->getNodeProperty('to', $transitionFrom);
 				if (($descendant = $this->findTargetNode(sprintf($this->getPattern('NodeById'), $to))) &&
-					$this->registerNode($descendant)) {
+						$this->registerNode($descendant)) {
 					$transition = $transitionTo;
 					$this->setNodeProperty('to', $this->getNodeProperty('id', $descendant), $transition);
 					$from = $this->getNodeProperty('from', $transitionTo);
 					if (($Object = $this->Objects[$from]) && $Object->getType() != 'Options') {
 						throw new FatalError('Invalid option object', $this->abstractNode($node));
 					}
-					$condition = $this->getCondition($Object->getKey(), $this->getNodeProperty('condition', $transitionTo));
+					$value = $this->getNodeProperty('condition', $transitionTo);
+					$condition = $this->getCondition($Object->getKey(), $value);
 					$this->setNodeProperty('condition', $condition, $transition);
 					$result = $result && $this->registerTransition($transition);
 				}
