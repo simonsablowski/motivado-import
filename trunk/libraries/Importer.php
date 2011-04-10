@@ -53,7 +53,10 @@ class Importer extends Application {
 	}
 	
 	protected function scanFile($pathFile) {
-		$data = preg_replace('/(xmlns=")(.+)(")/', '$1$3', file_get_contents($pathFile));
+		if (!mb_detect_encoding($contents = file_get_contents($pathFile), 'UTF-8', TRUE)) {
+			throw new FatalError('Wrong character encoding', $pathFile);
+		}
+		$data = preg_replace('/(xmlns=")(.+)(")/', '$1$3', $contents);
 		$this->pushOntoXmlStack(new SimpleXMLElement($data));
 		$this->findStartNode();
 		return $this->traverseNodes();
