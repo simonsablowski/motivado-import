@@ -203,18 +203,21 @@ class Importer extends Application {
 	protected function handleOptions($node) {
 		$pattern = $this->getPattern('OptionById');
 		$options = array();
-		foreach ($this->findNodesTransitions() as $transition) {
+		foreach ($this->findNodesTransitions($node) as $transition) {
 			if ($option = $this->findTargetNode(sprintf($pattern, $this->getNodeProperty('to', $transition)))) {
-				$options[$this->getNodeProperty('condition', $transition)] = $this->getNodeProperty('title', $option);
+				$options[] = array(
+					'key' => $this->getNodeProperty('condition', $transition),
+					'value' => $this->getNodeProperty('title', $option)
+				);
 			}
 		}
 		
 		$properties = array('options' => array());
 		$o = 1;
-		foreach ($options as $key => $value) {
+		foreach ($options as $option) {
 			$properties['options'][] = array(
-				'key' => $key ? $key : $o,
-				'value' => $value
+				'key' => $option['key'] ? $option['key'] : $o,
+				'value' => $option['value']
 			);
 			$o++;
 		}
