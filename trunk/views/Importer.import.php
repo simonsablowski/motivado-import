@@ -35,7 +35,7 @@
 							<? echo $Object->getKey(); ?>
 
 						</td>
-						<td class="field">
+						<td class="main field">
 							<? if ($title = $Object->getTitle()): ?><? echo $title; ?><? else: ?><? echo $Object->getDescription(); ?><? endif; ?>
 
 						</td>
