@@ -6,6 +6,9 @@ msgstr "Import"
 msgid "Objects"
 msgstr "Objekte"
 
+msgid "Directories"
+msgstr "Verzeichnisse"
+
 msgid "Coachings"
 msgstr "Coachings"
 
