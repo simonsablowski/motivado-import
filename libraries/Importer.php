@@ -58,7 +58,9 @@ class Importer extends Application {
 		}
 		$data = preg_replace('/(xmlns=")(.+)(")/', '$1$3', $contents);
 		$this->pushOntoXmlStack(new SimpleXMLElement($data));
-		$this->findStartNode();
+		if (!$this->findStartNode()) {
+			throw new FatalError('No start node defined', $pathFile);
+		}
 		return $this->traverseNodes();
 	}
 	
