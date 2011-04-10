@@ -1,6 +1,4 @@
 <? $this->displayView('components/header.php', array('title' => 'Import')); ?>
-			<script type="text/javascript" src="web/js/jquery-1.4.2.min.js"></script>
-			<script type="text/javascript" src="web/js/importer.js"></script>
 			<h1>
 				<a href="Importer/index" title="<? echo $this->localize('Import'); ?>"><? echo $this->localize('Import'); ?></a>
 			</h1>
@@ -20,8 +18,8 @@
 						</tr>
 					</thead>
 					<tbody class="body">
-<? foreach ($Coachings as $key => $directory): ?>
-							<tr id="group<? echo $key; ?>" class="divider">
+<? $n = 0; foreach ($Coachings as $key => $directory): $n++; ?>
+							<tr id="group<? echo $key; ?>" class="<? echo $n % 2 ? 'even' : 'odd'; ?> divider">
 								<td class="field data">
 									<input id="checkbox<? echo $key; ?>" class="checkbox" type="checkbox" name="keys[]" value="<? echo $key; ?>"/>
 									<label for="checkbox<? echo $key; ?>">
@@ -29,7 +27,9 @@
 									</label>
 								</td>
 								<td class="wide field">
-									<small><? echo $directory; ?></small>
+									<label for="checkbox<? echo $key; ?>">
+										<small><? echo $directory; ?></small>
+									</label>
 								</td>
 							</tr>
 <? endforeach; ?>

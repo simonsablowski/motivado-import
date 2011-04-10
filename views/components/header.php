@@ -7,6 +7,8 @@
 		<base href="<? echo $this->getApplication()->getConfiguration('baseUrl'); ?>"/>
 		<link href="<? echo $this->getApplication()->getConfiguration('cheeseUrl'); ?>web/css/style.css" rel="stylesheet" title="Default" type="text/css" />
 		<link href="web/css/style.css" rel="stylesheet" title="Default" type="text/css" />
+		<script type="text/javascript" src="<? echo $this->getApplication()->getConfiguration('cheeseUrl'); ?>web/js/jquery-1.4.2.min.js"></script>
+		<script type="text/javascript" src="<? echo $this->getApplication()->getConfiguration('cheeseUrl'); ?>web/js/cheese.js"></script>
 	</head>
 	<body>
 		<div id="document">
