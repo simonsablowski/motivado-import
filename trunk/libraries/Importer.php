@@ -250,17 +250,17 @@ class Importer extends Application {
 		}
 	}
 	
-	protected function handleObject($node) {
+	protected function handleObject($node, $disableTypeCheck = FALSE) {
 		preg_match('/\$(\w+)(:(\w+))?\((.*)\)(.*)/is', $this->getNodeProperty('description', $node), $matches);
-		if (!$matches) {
+		if (!$disableTypeCheck && !$matches) {
 			throw new FatalError('Object type undefined', $this->abstractNode($node));
 		}
 		
 		return array_map('trim', array_values(array(
-			'type' => $matches[1],
-			'key' => $matches[3],
-			'properties' => $matches[4],
-			'description' => $matches[5]
+			'type' => isset($matches[1]) ? $matches[1] : NULL,
+			'key' => isset($matches[3]) ? $matches[3] : NULL,
+			'properties' => isset($matches[4]) ? $matches[4] : NULL,
+			'description' => isset($matches[5]) ? $matches[5] : NULL
 		)));
 	}
 	
@@ -276,7 +276,16 @@ class Importer extends Application {
 			}
 		}
 		
+		list(, $key, $properties, $videoUrl) = $this->handleObject($node, TRUE);
 		$properties = array('options' => array());
+		if ($videoUrl) {
+			$properties = array_merge($properties, array(
+				'video' => array(
+					'url' => $videoUrl
+				)
+			));
+		}
+		
 		$o = 1;
 		foreach ($options as $option) {
 			$properties['options'][] = array(
@@ -286,7 +295,7 @@ class Importer extends Application {
 			$o++;
 		}
 		
-		if (!$key = $this->getNodeProperty('description', $node)) {
+		if (!$key) {
 			$key = preg_replace('/[^a-z0-9]/i', '', $this->getNodeProperty('id', $node));
 		}
 		
@@ -424,7 +433,8 @@ class Importer extends Application {
 						throw new FatalError('Invalid option object', $this->abstractNode($node));
 					}
 					$value = $this->getNodeProperty('condition', $transitionTo);
-					$condition = $this->getCondition($Object->getKey(), $value);
+					$condition = $this->getNodeProperty('condition', $transitionFrom);
+					$condition .= ($condition ? ' and ' : '') . $this->getCondition($Object->getKey(), $value);
 					$this->setNodeProperty('condition', $condition, $transition);
 					$result = $result && $this->registerTransition($transition);
 				}

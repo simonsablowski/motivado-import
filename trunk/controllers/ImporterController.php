@@ -17,6 +17,7 @@ class ImporterController extends Controller {
 		}
 		
 		$extension = $this->getConfiguration('fileExtensionModeling');
+		
 		$files = array();
 		$directory = dir($path);
 		while (($file = $directory->read()) !== FALSE) {
