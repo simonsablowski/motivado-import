@@ -4,7 +4,7 @@ class Importer extends Application {
 	protected $Coachings = array();
 	protected $Objects = array();
 	protected $ObjectTransitions = array();
-	protected $xmlStack = array();
+	protected $elementStack = array();
 	protected $nodePointer;
 	protected $clearTables;
 	
@@ -60,7 +60,7 @@ class Importer extends Application {
 			throw new FatalError('Wrong character encoding', $pathFile);
 		}
 		$data = preg_replace('/(xmlns=")(.+)(")/', '$1$3', $contents);
-		$this->pushOntoXmlStack(new SimpleXMLElement($data));
+		$this->pushOntoElementStack(new SimpleXMLElement($data));
 		if (!$this->findStartNode()) {
 			throw new FatalError('No start node defined', $pathFile);
 		}
@@ -100,16 +100,16 @@ class Importer extends Application {
 		}
 	}
 	
-	protected function pushOntoXmlStack($element) {
-		return $this->xmlStack[] = $element;
+	protected function pushOntoElementStack($element) {
+		return $this->elementStack[] = $element;
 	}
 	
-	protected function popOffXmlStack() {
-		return end($this->xmlStack);
+	protected function popOffElementStack() {
+		return end($this->elementStack);
 	}
 	
 	protected function getXmlBuffer() {
-		return $this->popOffXmlStack();
+		return $this->popOffElementStack();
 	}
 	
 	protected function getPattern($type) {
