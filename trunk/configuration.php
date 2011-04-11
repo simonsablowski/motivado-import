@@ -4,16 +4,16 @@ $configuration = array();
 
 $configuration['pathApplication'] = dirname(__FILE__) . '/';
 
-$configuration['pathApi'] = 'D:/Webprojekte/motivado/api/';
+$configuration['pathApi'] = 'D:/Entwicklung/api/';
 
-$configuration['baseUrl'] = 'http://localhost/motivado/importer/';
+$configuration['baseUrl'] = 'http://localhost/importer/';
 
 $configuration['cheeseUrl'] = 'http://localhost/cheese/';
 
 $configuration['includeDirectories'] = array(
 	$configuration['pathApplication'],
 	$configuration['pathApi'],
-	'D:/Webprojekte/nacho/'
+	'D:/Entwicklung/nacho/'
 );
 
 $configuration['Database'] = array(
@@ -40,6 +40,7 @@ $configuration['Request'] = array(
 $configuration['debugMode'] = TRUE;
 
 $configuration['pathModeling'] = $configuration['pathApplication'] . 'material/modeling/';
-$configuration['startFileNameModeling'] = 'Start.xpdl';
-$configuration['ignoreDirectoriesModeling'] = array('.', '..', '.svn', 'attachments');
+$configuration['fileExtensionModeling'] = '.xpdl';
+$configuration['ignoreFilesModeling'] = array('.', '..', '.svn', 'attachments');
+
 $configuration['clearTables'] = TRUE;
