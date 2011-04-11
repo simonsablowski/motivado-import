@@ -21,7 +21,7 @@
 <? $n = 0; foreach ($Coachings as $key => $directory): $n++; ?>
 							<tr id="group<? echo $key; ?>" class="<? echo $n % 2 ? 'even' : 'odd'; ?> divider">
 								<td class="field data">
-									<input id="checkbox<? echo $key; ?>" class="checkbox" type="checkbox" name="keys[]" value="<? echo $key; ?>"/>
+									<input id="checkbox<? echo $key; ?>" class="checkbox" type="checkbox" name="keys[<? echo $key; ?>]" value="<? echo $directory; ?>"/>
 									<label for="checkbox<? echo $key; ?>">
 										<? echo $key; ?>
 									</label>

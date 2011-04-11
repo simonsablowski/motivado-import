@@ -67,12 +67,6 @@ class Importer extends Application {
 		return $this->traverseNodes();
 	}
 	
-	protected function import($directory) {
-		$path = $this->getConfiguration('pathModeling') . $directory;
-		$path .= substr($path, -1) == '/' ? '' : '/';
-		return $this->scanFile($path . $this->getConfiguration('startFileNameModeling'));
-	}
-	
 	protected function validate($type, $value) {
 		switch ($type) {
 			case 'CoachingKey':
@@ -88,7 +82,7 @@ class Importer extends Application {
 			$this->clearTables();
 		}
 		
-		foreach ($Coachings as $key) {
+		foreach ($Coachings as $key => $pathFile) {
 			$this->validate('CoachingKey', $key);
 			
 			try {
@@ -102,7 +96,7 @@ class Importer extends Application {
 			$this->setCurrentCoaching($Coaching);
 			
 			$this->cleanTables();
-			$this->import($this->getCurrentCoaching()->getKey());
+			$this->scanFile($pathFile);
 		}
 	}
 	
