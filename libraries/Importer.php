@@ -13,7 +13,6 @@ class Importer extends Application {
 		$this->setClearTables((bool)$this->getConfiguration('clearTables'));
 	}
 	
-	// library: Importer (native)
 	protected function setCurrentCoaching(Coaching $Coaching) {
 		return $this->Coachings[] = $Coaching;
 	}
@@ -22,7 +21,6 @@ class Importer extends Application {
 		return end($this->Coachings);
 	}
 	
-	// library: Database (static)
 	protected function clearTables() {
 		if (Database::query('TRUNCATE `coaching`') &&
 			Database::query('TRUNCATE `object`')) {
@@ -44,7 +42,6 @@ class Importer extends Application {
 		return $result;
 	}
 	
-	// library: Node (static)
 	protected function traverseNodes($node = NULL) {
 		if (is_null($node)) {
 			$node = $this->getNodePointer();
@@ -58,7 +55,6 @@ class Importer extends Application {
 		return $nodes;
 	}
 	
-	// library: File (static)
 	protected function scanFile($pathFile) {
 		if (!mb_detect_encoding($contents = file_get_contents($pathFile), 'UTF-8', TRUE)) {
 			throw new FatalError('Wrong character encoding', $pathFile);
@@ -81,7 +77,6 @@ class Importer extends Application {
 		}
 	}
 	
-	// library: Importer (native)
 	public function run($Coachings) {
 		if ($this->isClearTables()) {
 			$this->clearTables();
@@ -140,7 +135,6 @@ class Importer extends Application {
 		}
 	}
 	
-	// library: Node (static)
 	protected function findTargetNode($pattern) {
 		if ($array = $this->getXmlBuffer()->xpath($pattern)) return pos($array);
 		return NULL;
@@ -192,7 +186,6 @@ class Importer extends Application {
 		return $nodes;
 	}
 	
-	// library: Node
 	protected function getNodeProperty($property, $node = NULL) {
 		if (is_null($node)) {
 			$node = $this->getNodePointer();
@@ -271,7 +264,6 @@ class Importer extends Application {
 		)));
 	}
 	
-	// library: Options extends Node
 	protected function handleOptions($node) {
 		$pattern = $this->getPattern('OptionById');
 		$options = array();
@@ -313,7 +305,6 @@ class Importer extends Application {
 		));
 	}
 	
-	// library: Text extends Node
 	protected function handleText($node) {
 		$title = $this->getNodeProperty('title', $node);
 		$description = $this->getNodeProperty('description', $node);
@@ -329,7 +320,6 @@ class Importer extends Application {
 		));
 	}
 	
-	// library: Node
 	protected function abstractNode($node) {
 		return array_slice((array)$node, 0, 3);
 	}
@@ -383,7 +373,6 @@ class Importer extends Application {
 		return sprintf('%s %s %s', $key, $operator, is_int($value) ? $value : sprintf('\'%s\'', $value));
 	}
 	
-	// library: Transition
 	protected function handleSetTransitions($node) {
 		$result = TRUE;
 		$setId = $this->getNodeProperty('setId', $node);
@@ -412,7 +401,6 @@ class Importer extends Application {
 		return $result;
 	}
 	
-	// library: SplitterTransition extends Transition
 	protected function handleSplitterTransitions($node) {
 		$result = TRUE;
 		foreach ($this->findNodesTransitions($node, $this->getPattern('TransitionTo')) as $transitionTo) {
@@ -431,7 +419,6 @@ class Importer extends Application {
 		return $result;
 	}
 	
-	// library: OptionTransition extends Transition
 	protected function handleOptionTransitions($node) {
 		$result = TRUE;
 		foreach ($this->findNodesTransitions($node, $this->getPattern('TransitionTo')) as $transitionTo) {
@@ -442,7 +429,7 @@ class Importer extends Application {
 					$transition = $transitionTo;
 					$this->setNodeProperty('to', $this->getNodeProperty('id', $descendant), $transition);
 					$from = $this->getNodeProperty('from', $transitionTo);
-					if (($Object = $this->Objects[$from]) && $Object->getType() != 'Options') {
+					if (!isset($this->Objects[$from]) || ($Object = $this->Objects[$from]) && $Object->getType() != 'Options') {
 						throw new FatalError('Invalid option object', $this->abstractNode($node));
 					}
 					$value = $this->getNodeProperty('condition', $transitionTo);
@@ -456,7 +443,6 @@ class Importer extends Application {
 		return $result;
 	}
 	
-	// library: Transition
 	protected function registerTransition($transition) {
 		if (isset($this->ObjectTransitions[$id = $this->getNodeProperty('id', $transition)])) {
 			return $this->ObjectTransitions[$id];
