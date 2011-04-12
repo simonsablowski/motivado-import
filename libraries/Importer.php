@@ -207,9 +207,9 @@ class Importer extends Application {
 		}
 	}
 	
-	protected function setNodeProperty($property, $value, &$node = NULL) {
+	protected function setNodeProperty($property, $value, $node = NULL) {
 		if (is_null($node)) {
-			$node = &$this->getNodePointer();
+			$node = $this->getNodePointer();
 		}
 		switch ($property) {
 			case 'to':
@@ -259,7 +259,7 @@ class Importer extends Application {
 		return array_map('trim', array_values(array(
 			'type' => isset($matches[1]) ? $matches[1] : NULL,
 			'key' => isset($matches[3]) ? $matches[3] : NULL,
-			'properties' => isset($matches[4]) ? $matches[4] : NULL,
+			'properties' => isset($matches[4]) ? sprintf('{%s}', $matches[4]) : NULL,
 			'description' => isset($matches[5]) ? $matches[5] : NULL
 		)));
 	}
@@ -301,22 +301,7 @@ class Importer extends Application {
 		
 		return array_values(array(
 			'key' => $key,
-			'properties' => $properties
-		));
-	}
-	
-	protected function handleText($node) {
-		$title = $this->getNodeProperty('title', $node);
-		$description = $this->getNodeProperty('description', $node);
-		
-		if ($title && !$description) {
-			$description = $title;
-			$title = '';
-		}
-		
-		return array_values(array(
-			'title' => $title,
-			'description' => $description
+			'properties' => Json::encode($properties)
 		));
 	}
 	
@@ -329,25 +314,20 @@ class Importer extends Application {
 			return $this->Objects[$id];
 		}
 		
-		$key = '';
-		$properties = '';
+		$key = NULL;
+		$properties = NULL;
 		$title = $this->getNodeProperty('title', $node);
 		$description = $this->getNodeProperty('description', $node);
 		
 		if ($this->isNodeType(NULL, $node)) {
 			list($type, $key, $properties, $description) = $this->handleObject($node);
-			if ($properties) {
-				if (!$properties = Json::decode(sprintf('{%s}', $properties))) {
-					throw new FatalError('Invalid JSON code', $this->abstractNode($node));
-				}
-			}
 		} else if ($this->isNodeType('Options', $node)) {
 			$type = 'Options';
 			list($key, $properties) = $this->handleOptions($node);
 			$description = '';
 		} else if ($this->isNodeType('Text', $node)) {
 			$type = 'Text';
-			list($title, $description) = $this->handleText($node);
+			list(, , $properties, $description) = $this->handleObject($node, TRUE);
 		} else if ($this->isNodeType('Set', $node) ||
 					$this->isNodeType('Splitter', $node) ||
 					$this->isNodeType('Option', $node) ||
@@ -357,13 +337,21 @@ class Importer extends Application {
 			throw new FatalError('Unknown object type', $this->abstractNode($node));
 		}
 		
+		if ($properties && !Json::decode($properties)) {
+			throw new FatalError('Invalid JSON code', $this->abstractNode($node));
+		}
+		if ($title && strlen($title) > 255 && !$description) {
+			$description = $title;
+			$title = '';
+		}
+		
 		$Object = new Object(array(
 			'CoachingId' => $this->getCurrentCoaching()->getId(),
 			'type' => $type,
-			'key' => $key ? $key : NULL,
-			'properties' => $properties ? Json::encode($properties) : NULL,
+			'key' => $key,
+			'properties' => $properties,
 			'title' => $title,
-			'description' => $description ? $description : NULL
+			'description' => $description
 		));
 		$Object->create();
 		$this->Objects[$id] = $Object;
@@ -391,7 +379,7 @@ class Importer extends Application {
 					$to = $this->getNodeProperty('to', $transitionFrom);
 					if (($descendant = $this->findTargetNode(sprintf($this->getPattern('NodeById'), $to))) &&
 							$this->registerNode($descendant)) {
-						$transition = $transitionTo;
+						$transition = clone $transitionTo;
 						$this->setNodeProperty('to', $this->getNodeProperty('id', $descendant), $transition);
 						$condition = $this->getNodeProperty('condition', $transitionFrom);
 						$this->setNodeProperty('condition', $condition, $transition);
@@ -410,7 +398,7 @@ class Importer extends Application {
 				$to = $this->getNodeProperty('to', $transitionFrom);
 				if (($descendant = $this->findTargetNode(sprintf($this->getPattern('NodeById'), $to))) &&
 						$this->registerNode($descendant)) {
-					$transition = $transitionTo;
+					$transition = clone $transitionTo;
 					$this->setNodeProperty('to', $this->getNodeProperty('id', $descendant), $transition);
 					$condition = $this->getNodeProperty('condition', $transitionFrom);
 					$this->setNodeProperty('condition', $condition, $transition);
@@ -428,15 +416,17 @@ class Importer extends Application {
 				$to = $this->getNodeProperty('to', $transitionFrom);
 				if (($descendant = $this->findTargetNode(sprintf($this->getPattern('NodeById'), $to))) &&
 						$this->registerNode($descendant)) {
-					$transition = $transitionTo;
+					$transition = clone $transitionTo;
 					$this->setNodeProperty('to', $this->getNodeProperty('id', $descendant), $transition);
-					$from = $this->getNodeProperty('from', $transitionTo);
+					$from = $this->getNodeProperty('from', $transition);
 					if (!isset($this->Objects[$from]) || ($Object = $this->Objects[$from]) && $Object->getType() != 'Options') {
 						throw new FatalError('Invalid option object', $this->abstractNode($node));
 					}
-					$value = $this->getNodeProperty('condition', $transitionTo);
+					$value = $this->getNodeProperty('condition', $transition);
 					$condition = $this->getNodeProperty('condition', $transitionFrom);
-					$condition .= ($condition ? ' and ' : '') . $this->getCondition($Object->getKey(), $value);
+					$extension = $value ? $this->getCondition($Object->getKey(), $value) : '';
+					$condition = str_replace(' and ' . $extension, '', $condition);
+					$condition .= ($condition && $extension ? ' and ' : '') . $extension;
 					$this->setNodeProperty('condition', $condition, $transition);
 					$result = $result && $this->registerTransition($transition);
 				}
