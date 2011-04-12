@@ -329,6 +329,8 @@ class Importer extends Application {
 			return $this->Objects[$id];
 		}
 		
+		$key = '';
+		$properties = '';
 		$title = $this->getNodeProperty('title', $node);
 		$description = $this->getNodeProperty('description', $node);
 		
@@ -357,11 +359,11 @@ class Importer extends Application {
 		
 		$Object = new Object(array(
 			'CoachingId' => $this->getCurrentCoaching()->getId(),
-			'title' => $title,
-			'description' => isset($description) ? $description : NULL,
 			'type' => $type,
-			'key' => isset($key) ? $key : NULL,
-			'properties' => isset($properties) ? Json::encode($properties) : NULL
+			'key' => $key ? $key : NULL,
+			'properties' => $properties ? Json::encode($properties) : NULL,
+			'title' => $title,
+			'description' => $description ? $description : NULL
 		));
 		$Object->create();
 		$this->Objects[$id] = $Object;
