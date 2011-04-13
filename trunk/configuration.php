@@ -4,16 +4,14 @@ $configuration = array();
 
 $configuration['pathApplication'] = dirname(__FILE__) . '/';
 
-$configuration['pathApi'] = 'D:/Entwicklung/api/';
-
-$configuration['baseUrl'] = 'http://localhost/importer/';
+$configuration['baseUrl'] = 'http://localhost/motivado/importer/';
 
 $configuration['cheeseUrl'] = 'http://localhost/cheese/';
 
 $configuration['includeDirectories'] = array(
 	$configuration['pathApplication'],
-	$configuration['pathApi'],
-	'D:/Entwicklung/nacho/'
+	'D:/Webprojekte/motivado/api/',
+	'D:/Webprojekte/nacho/'
 );
 
 $configuration['Database'] = array(
