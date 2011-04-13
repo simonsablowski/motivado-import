@@ -1,10 +1,10 @@
 <?php
 
 class OptionsNode extends Node {
-	protected function handle() {
+	protected function analyze() {
 		$pattern = Element::getPattern('OptionById');
 		$options = array();
-		foreach (self::findTransitions() as $Transition) {
+		foreach (self::findAll() as $Transition) {
 			if ($Option = self::findTarget(sprintf($pattern, $Transition->getProperty('to')))) {
 				$options[] = array(
 					'key' => $Transition->getProperty('condition'),
@@ -13,7 +13,7 @@ class OptionsNode extends Node {
 			}
 		}
 		
-		list(, $key, $properties, $videoUrl) = parent::handle(TRUE);
+		list(, $key, $properties, $videoUrl) = parent::analyze(TRUE);
 		$properties = array('options' => array());
 		if ($videoUrl) {
 			$properties = array_merge($properties, array(

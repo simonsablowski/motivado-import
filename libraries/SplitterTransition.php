@@ -1,10 +1,10 @@
 <?php
 
 class SplitterTransition extends Transition {
-	protected function handle(/*$Node = NULL, */$disableTypeCheck = FALSE) {
+	protected static function handle($Node = NULL) {
 		$result = TRUE;
-		foreach (self::findTransitions($Node, Element::getPattern('TransitionTo')) as $TransitionTo) {
-			foreach (self::findTransitions($Node, Element::getPattern('TransitionFrom')) as $TransitionFrom) {
+		foreach (self::findAll($Node, Element::getPattern('TransitionTo')) as $TransitionTo) {
+			foreach (self::findAll($Node, Element::getPattern('TransitionFrom')) as $TransitionFrom) {
 				$to = $TransitionFrom->getProperty('to');
 				if (($Descendant = self::findTarget(sprintf(Element::getPattern('NodeById'), $to))) &&
 						$Descendant->register()) {

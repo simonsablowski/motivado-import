@@ -1,10 +1,10 @@
 <?php
 
 class OptionTransition extends Transition {
-	protected function handle(/*$Node = NULL, */$disableTypeCheck = FALSE) {
+	protected static function handle($Node = NULL) {
 		$result = TRUE;
-		foreach (self::findTransitions($Node, Element::getPattern('TransitionTo')) as $TransitionTo) {
-			foreach (self::findTransitions($Node, Element::getPattern('TransitionFrom')) as $TransitionFrom) {
+		foreach (self::findAll($Node, Element::getPattern('TransitionTo')) as $TransitionTo) {
+			foreach (self::findAll($Node, Element::getPattern('TransitionFrom')) as $TransitionFrom) {
 				$to = $TransitionFrom->getProperty('to');
 				if (($Descendant = self::findTarget(sprintf(Element::getPattern('NodeById'), $to))) &&
 						$Descendant->register()) {
@@ -16,7 +16,7 @@ class OptionTransition extends Transition {
 					}
 					$value = $Transition->getProperty('condition');
 					$condition = $TransitionFrom->getProperty('condition');
-					$extension = $value ? $this->getCondition($Object->getKey(), $value) : '';
+					$extension = $value ? self::getCondition($Object->getKey(), $value) : '';
 					$condition = str_replace(' and ' . $extension, '', $condition);
 					$condition .= ($condition && $extension ? ' and ' : '') . $extension;
 					$Transition->setProperty('condition', $condition);

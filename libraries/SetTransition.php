@@ -1,19 +1,19 @@
 <?php
 
 class SetTransition extends Transition {
-	protected function handle(/*$Node = NULL, */$disableTypeCheck = FALSE) {
+	protected static function handle($Node = NULL) {
 		$result = TRUE;
 		$setId = $Node->getProperty('setId');
 		if (!$start = self::findStart(sprintf(Element::getPattern('SetByIdStart'), $setId))) {
 			throw new FatalError('No start node defined', $Node->summarize());
 		}
-		foreach (self::findTransitions($Node, Element::getPattern('TransitionTo')) as $TransitionTo) {
+		foreach (self::findAll($Node, Element::getPattern('TransitionTo')) as $TransitionTo) {
 			$from = $TransitionTo->getProperty('from');
 			if (($Ancestor = self::findTarget(sprintf(Element::getPattern('NodeById'), $from))) &&
 					$Ancestor->register()) {
 				self::setPointer($Node);
 				self::traverse($start);
-				foreach (self::findTransitions($Node, Element::getPattern('TransitionFrom')) as $TransitionFrom) {
+				foreach (self::findAll($Node, Element::getPattern('TransitionFrom')) as $TransitionFrom) {
 					$to = $TransitionFrom->getProperty('to');
 					if (($Descendant = self::findTarget(sprintf(Element::getPattern('NodeById'), $to))) &&
 							$Descendant->register()) {
