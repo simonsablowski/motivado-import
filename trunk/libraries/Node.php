@@ -95,7 +95,7 @@ class Node extends Importer {
 		return array_slice((array)$this, 0, 3);
 	}
 	
-	protected function handle($disableTypeCheck = FALSE) {
+	protected function analyze($disableTypeCheck = FALSE) {
 		preg_match('/\$(\w+)(:(\w+))?\((.*)\)(.*)/is', $this->getProperty('description'), $matches);
 		if (!$disableTypeCheck && !$matches) {
 			throw new FatalError('Object type undefined', $this->summarize());
@@ -120,14 +120,14 @@ class Node extends Importer {
 		$description = $this->getProperty('description');
 		
 		if ($this->isType(NULL)) {
-			list($type, $key, $properties, $description) = $this->handle();
+			list($type, $key, $properties, $description) = $this->analyze();
 		} else if ($this->isType('Options')) {
 			$type = 'Options';
-			list($key, $properties) = $this->handle(TRUE);
+			list($key, $properties) = $this->analyze(TRUE);
 			$description = '';
 		} else if ($this->isType('Text')) {
 			$type = 'Text';
-			list(, , $properties, $description) = $this->handle(TRUE);
+			list(, , $properties, $description) = $this->analyze(TRUE);
 		} else if ($this->isType('Set') ||
 					$this->isType('Splitter') ||
 					$this->isType('Option') ||

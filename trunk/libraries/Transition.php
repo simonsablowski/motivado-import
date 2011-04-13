@@ -37,11 +37,11 @@ class Transition extends Node {
 			$RightId = Node::$Objects[$to]->getId();
 		} else if ($Node = self::findById($to)) {
 			if ($Node->isType('Set')) {
-				// return SetTransition::handle($Node);
+				return SetTransition::handle($Node);
 			} else if ($Node->isType('Splitter')) {
-				// return SplitterTransition::handle($Node);
+				return SplitterTransition::handle($Node);
 			} else if ($Node->isType('Option')) {
-				// return OptionTransition::handle($Node);
+				return OptionTransition::handle($Node);
 			}
 		}
 		
