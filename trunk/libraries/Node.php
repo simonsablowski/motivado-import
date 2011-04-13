@@ -123,7 +123,7 @@ class Node extends Importer {
 			list($type, $key, $properties, $description) = $this->analyze();
 		} else if ($this->isType('Options')) {
 			$type = 'Options';
-			list($key, $properties) = $this->analyze(TRUE);
+			list(, $key, $properties) = $this->analyze(TRUE);
 			$description = '';
 		} else if ($this->isType('Text')) {
 			$type = 'Text';
