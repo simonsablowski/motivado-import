@@ -1,10 +1,10 @@
 <?php
 
 class OptionsNode extends Node {
-	protected function analyze() {
+	public static function analyze(Node $Node) {
 		$pattern = Element::getPattern('OptionById');
 		$options = array();
-		foreach (self::findAll() as $Transition) {
+		foreach (Transition::findAll($Node) as $Transition) {
 			if ($Option = self::findTarget(sprintf($pattern, $Transition->getProperty('to')))) {
 				$options[] = array(
 					'key' => $Transition->getProperty('condition'),
@@ -13,7 +13,7 @@ class OptionsNode extends Node {
 			}
 		}
 		
-		list(, $key, $properties, $videoUrl) = parent::analyze(TRUE);
+		list(, $key, $properties, $videoUrl) = parent::analyze($Node, TRUE);
 		$properties = array('options' => array());
 		if ($videoUrl) {
 			$properties = array_merge($properties, array(
@@ -33,7 +33,7 @@ class OptionsNode extends Node {
 		}
 		
 		if (!$key) {
-			$key = preg_replace('/[^a-z0-9]/i', '', $this->getProperty('id'));
+			$key = preg_replace('/[^a-z0-9]/i', '', $Node->getProperty('id'));
 		}
 		
 		return array_values(array(
