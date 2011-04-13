@@ -9,14 +9,14 @@ class SetTransition extends Transition {
 		}
 		foreach (self::findAll($Node, Element::getPattern('TransitionTo')) as $TransitionTo) {
 			$from = $TransitionTo->getProperty('from');
-			if (($Ancestor = self::findTarget(sprintf(Element::getPattern('NodeById'), $from))) &&
-					$Ancestor->register()) {
+			if (($Ancestor = self::findTarget(sprintf(Element::getPattern('NodeById'), $from)))) {
+				$Ancestor->register();
 				self::setPointer($Node);
 				self::traverse($start);
 				foreach (self::findAll($Node, Element::getPattern('TransitionFrom')) as $TransitionFrom) {
 					$to = $TransitionFrom->getProperty('to');
-					if (($Descendant = self::findTarget(sprintf(Element::getPattern('NodeById'), $to))) &&
-							$Descendant->register()) {
+					if (($Descendant = self::findTarget(sprintf(Element::getPattern('NodeById'), $to)))) {
+						$Descendant->register();
 						$Transition = clone $TransitionTo;
 						$Transition->setProperty('to', $Descendant->getProperty('id'));
 						$condition = $TransitionFrom->getProperty('condition');

@@ -66,10 +66,9 @@ class Node extends Importer {
 		$Nodes = array();
 		foreach (Transition::findAll($Node) as $Transition) {
 			if ($Descendant = self::findTarget(sprintf($pattern, $Transition->getProperty('to')))) {
-				if ($Descendant->register()) {
-					$Transition->register();
-					$Nodes[] = $Descendant;
-				}
+				$Descendant->register();
+				$Transition->register();
+				$Nodes[] = $Descendant;
 			}
 		}
 		return $Nodes;

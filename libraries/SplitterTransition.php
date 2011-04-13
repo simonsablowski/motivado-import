@@ -6,8 +6,8 @@ class SplitterTransition extends Transition {
 		foreach (self::findAll($Node, Element::getPattern('TransitionTo')) as $TransitionTo) {
 			foreach (self::findAll($Node, Element::getPattern('TransitionFrom')) as $TransitionFrom) {
 				$to = $TransitionFrom->getProperty('to');
-				if (($Descendant = self::findTarget(sprintf(Element::getPattern('NodeById'), $to))) &&
-						$Descendant->register()) {
+				if (($Descendant = self::findTarget(sprintf(Element::getPattern('NodeById'), $to)))) {
+					$Descendant->register();
 					$Transition = clone $TransitionTo;
 					$Transition->setProperty('to', $Descendant->getProperty('id'));
 					$condition = $TransitionFrom->getProperty('condition');
