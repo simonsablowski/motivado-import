@@ -18,10 +18,7 @@ class Importer extends Application {
 	}
 	
 	protected function clearTables() {
-		if (Database::query('TRUNCATE `coaching`') &&
-			Database::query('TRUNCATE `object`')) {
-			return Database::query('TRUNCATE `objecttransition`');
-		}
+		return Coaching::truncate() && Object::truncate() && ObjectTransition::truncate();
 	}
 	
 	protected function cleanTables() {
