@@ -1,7 +1,7 @@
 <?php
 
 class OptionsNode extends Node {
-	public static function analyze(Node $Node) {
+	public static function analyze(Node $Node, $disableTypeCheck = FALSE) {
 		$pattern = Element::getPattern('OptionById');
 		$options = array();
 		foreach (Transition::findAll($Node) as $Transition) {
