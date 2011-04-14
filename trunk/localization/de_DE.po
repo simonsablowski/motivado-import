@@ -15,6 +15,9 @@ msgstr "Coachings"
 msgid "%d objects"
 msgstr "%d Objekte"
 
+msgid "%d object"
+msgstr "%d Objekt"
+
 # Error
 
 msgid "Error"
