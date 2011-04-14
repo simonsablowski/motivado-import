@@ -18,7 +18,7 @@
 <? foreach ($Coachings as $n => $Coaching): ?>
 					<tr id="group<? echo $n + 1; ?>" class="<? echo $n % 2 ? 'even' : 'odd'; ?> divider row">
 						<td class="field data" colspan="5">
-							<? echo $Coaching->getKey(); ?> <em>(<? echo $this->localize('%d objects', count($Coaching->getObjects())); ?>)</em>
+							<? echo $Coaching->getKey(); ?> <em>(<? echo $this->localize('%d ' . (($count = count($Coaching->getObjects())) == 1 ? $this->localize('object') : $this->localize('objects')), $count); ?>)</em>
 						</td>
 					</tr>
 <? foreach ($Coaching->getObjects() as $m => $Object): ?>
