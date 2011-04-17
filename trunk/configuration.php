@@ -11,7 +11,8 @@ $configuration['cheeseUrl'] = 'http://localhost/cheese/';
 $configuration['includeDirectories'] = array(
 	$configuration['pathApplication'],
 	'D:/Webprojekte/motivado/api/',
-	'D:/Webprojekte/nacho/'
+	'D:/Webprojekte/nacho/',
+	'D:/Webprojekte/cheese/'
 );
 
 $configuration['Database'] = array(
