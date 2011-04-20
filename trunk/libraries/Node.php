@@ -2,6 +2,7 @@
 
 class Node extends Importer {
 	protected static $Coaching;
+	protected static $Nodes = array();
 	protected static $Objects = array();
 	protected static $Pointer;
 	protected static $Collections = array();
@@ -20,9 +21,13 @@ class Node extends Importer {
 			$Node = self::getPointer();
 		}
 		if (!$Node) return FALSE;
+		
 		$Nodes = self::findNext($pattern, $Node);
 		foreach ($Nodes as $Node) {
-			$Nodes = array_merge($Nodes, self::traverse($Node, $pattern));
+			if (!in_array($Node, self::getNodes())) {
+				self::$Nodes[] = $Node;
+				$Nodes = array_merge($Nodes, self::traverse($Node, $pattern));
+			}
 		}
 		return $Nodes;
 	}
