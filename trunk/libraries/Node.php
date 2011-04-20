@@ -15,15 +15,14 @@ class Node extends Importer {
 		return end(self::$Collections);
 	}
 	
-	protected static function traverse($Node = NULL) {
+	protected static function traverse($Node = NULL, $pattern = NULL) {
 		if (is_null($Node)) {
 			$Node = self::getPointer();
 		}
 		if (!$Node) return FALSE;
-		$Nodes = self::findNext(NULL, $Node);
+		$Nodes = self::findNext($pattern, $Node);
 		foreach ($Nodes as $Node) {
-			self::setPointer($Node);
-			$Nodes = array_merge($Nodes, self::traverse());
+			$Nodes = array_merge($Nodes, self::traverse($Node, $pattern));
 		}
 		return $Nodes;
 	}
