@@ -3,7 +3,7 @@
 class Transition extends Node {
 	protected static $ObjectTransitions = array();
 	
-	public static function findAll(Node $Node, $pattern = NULL) {
+	public static function findAllOfNode(Node $Node, $pattern = NULL) {
 		if (is_null($pattern)) {
 			$pattern = Element::getPattern('TransitionFrom');
 		}
@@ -25,13 +25,17 @@ class Transition extends Node {
 		
 		if (isset(Node::$Objects[$from = $this->getProperty('from')])) {
 			$LeftId = Node::$Objects[$from]->getId();
-		} else if ($Node = self::findById($from)) {
+		}/* else if ($Node = self::findById($from)) {
 			if ($Node->isType('Set') ||
 				$Node->isType('Splitter') ||
 				$Node->isType('Option')) {
 				return FALSE;
+			} else if ($Node->isType('Start') && ($Pointer = self::$Pointer)) {
+				if (isset(Node::$Objects[$Pointer->getProperty('id')])) {
+					$LeftId = Node::$Objects[$Pointer->getProperty('id')]->getId();//TODO
+				}
 			}
-		}
+		}*/
 		
 		if (isset(Node::$Objects[$to = $this->getProperty('to')])) {
 			$RightId = Node::$Objects[$to]->getId();

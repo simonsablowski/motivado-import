@@ -36,29 +36,29 @@ class Node extends Importer {
 		return self::popCollection()->search($pattern);
 	}
 	
+	public static function findAll($pattern) {
+		$Nodes = array();
+		foreach (self::search($pattern) as $Element) {
+			$Nodes[] = new Node($Element);
+		}
+		return $Nodes;
+	}
+	
 	public static function findTarget($pattern) {
-		if ($array = self::search($pattern)) {
-			$Element = pos($array);
-			return new Node($Element);
+		if ($Nodes = self::findAll($pattern)) {
+			return pos($Nodes);
 		}
 	}
 	
-	protected static function find($pattern) {
+	public static function find($pattern) {
 		return self::setPointer(self::findTarget($pattern));
 	}
 	
-	protected static function findById($id) {
+	public static function findById($id) {
 		return self::find(sprintf(Element::getPattern('NodeById'), $id));
 	}
 	
-	protected static function findStart($pattern = NULL) {
-		if (is_null($pattern)) {
-			$pattern = Element::getPattern('Start');
-		}
-		return self::find($pattern);
-	}
-	
-	protected static function findNext($pattern = NULL, $Node = NULL) {
+	public static function findNext($pattern = NULL, $Node = NULL) {
 		if (is_null($pattern)) {
 			$pattern = Element::getPattern('NodeById');
 			$pattern .= '|' . Element::getPattern('SplitterById');
@@ -68,7 +68,7 @@ class Node extends Importer {
 			$Node = self::getPointer();
 		}
 		$Nodes = array();
-		foreach (Transition::findAll($Node) as $Transition) {
+		foreach (Transition::findAllOfNode($Node) as $Transition) {
 			if ($Descendant = self::findTarget(sprintf($pattern, $Transition->getProperty('to')))) {
 				$Descendant->register();
 				$Transition->register();
