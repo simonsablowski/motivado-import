@@ -24,7 +24,7 @@ class ImporterController extends Controller {
 			if (in_array($file, $this->getConfiguration('ignoreFilesModeling'))) continue;
 			$pathFile = $path . $file;
 			if (is_file($pathFile) && substr($file, -(strlen($extension))) == $extension) {
-				break $files[strstr($file, $extension, TRUE)] = $pathFile;
+				$files[strstr($file, $extension, TRUE)] = $pathFile;
 			} else if (is_dir($pathFile)) {
 				$files = array_merge($files, $this->getImportFiles($pathFile . '/'));
 			}
