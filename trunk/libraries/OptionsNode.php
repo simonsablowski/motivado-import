@@ -4,7 +4,7 @@ class OptionsNode extends Node {
 	public static function analyze(Node $Node, $disableTypeCheck = FALSE) {
 		$pattern = Element::getPattern('OptionById');
 		$options = array();
-		foreach (Transition::findAll($Node) as $Transition) {
+		foreach (Transition::findAllOfNode($Node) as $Transition) {
 			if ($Option = self::findTarget(sprintf($pattern, $Transition->getProperty('to')))) {
 				$options[] = array(
 					'key' => $Transition->getProperty('condition'),

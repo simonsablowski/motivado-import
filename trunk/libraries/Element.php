@@ -13,6 +13,8 @@ class Element extends SimpleXMLElement {
 				return '//ActivitySet[@Id="%1$s"]';
 			case 'SetByIdStart':
 				return sprintf('//%s/Activities/Activity/Event/StartEvent/parent::*/parent::*', self::getPattern('SetById'));
+			case 'SetByIdEnd':
+				return sprintf('//%s/Activities/Activity/Event/EndEvent/parent::*/parent::*', self::getPattern('SetById'));
 			case 'SplitterById':
 				return '//Activity[@Id="%1$s"]/Route/parent::*';
 			case 'OptionById':
@@ -74,6 +76,8 @@ class Element extends SimpleXMLElement {
 					!$this->isType('Text') &&
 					!$this->isType('Set') &&
 					!$this->isType('Splitter');
+			case 'Start':
+				return isset($this->Event->StartEvent);
 			case 'End':
 				return isset($this->Event->EndEvent);
 		}

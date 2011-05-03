@@ -42,7 +42,7 @@ class Importer extends Application {
 		$data = preg_replace('/(xmlns=")(.+)(")/', '$1$3', $contents);
 		Node::setCoaching($this->getCurrentCoaching());
 		Node::pushCollection(new Element($data));
-		if (!Node::findStart()) {
+		if (!Node::find(Element::getPattern('Start'))) {
 			throw new FatalError('No start node defined', $pathFile);
 		}
 		return Node::traverse();

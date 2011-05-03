@@ -4,15 +4,14 @@ $configuration = array();
 
 $configuration['pathApplication'] = dirname(__FILE__) . '/';
 
-$configuration['baseUrl'] = 'http://localhost/motivado/importer/';
-
+$configuration['baseUrl'] = 'http://localhost/importer/';
 $configuration['cheeseUrl'] = 'http://localhost/cheese/';
 
 $configuration['includeDirectories'] = array(
 	$configuration['pathApplication'],
-	'D:/Webprojekte/motivado/api/',
-	'D:/Webprojekte/nacho/',
-	'D:/Webprojekte/cheese/'
+	'D:/Entwicklung/api/',
+	'D:/Entwicklung/nacho/',
+	'D:/Entwicklung/cheese/'
 );
 
 $configuration['Database'] = array(
@@ -38,8 +37,11 @@ $configuration['Request'] = array(
 
 $configuration['debugMode'] = TRUE;
 
+// $configuration['executionTime'] = 120;
+
 $configuration['pathModeling'] = $configuration['pathApplication'] . 'material/modeling/';
+// $configuration['pathModeling'] = 'ftp://gast:gast@192.168.3.102/disk1/share/Inhalt/Modellierung_Kopie/';
 $configuration['fileExtensionModeling'] = '.xpdl';
-$configuration['ignoreFilesModeling'] = array('.', '..', '.svn', 'attachments');
+$configuration['ignoreFilesModeling'] = array('.', '..', '.svn', 'attachments', 'bpm');
 
 $configuration['clearTables'] = TRUE;
