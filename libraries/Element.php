@@ -84,6 +84,6 @@ class Element extends SimpleXMLElement {
 	}
 	
 	public function search($pattern) {
-		return $this->xpath($pattern);
+		return ($result = $this->xpath($pattern)) ? $result : array();
 	}
 }
