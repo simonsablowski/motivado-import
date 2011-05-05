@@ -25,21 +25,21 @@ class Transition extends Node {
 		
 		if (isset(Node::$Objects[$from = $this->getProperty('from')])) {
 			$LeftId = Node::$Objects[$from]->getId();
-		}/* else if ($Node = self::findById($from)) {
+		} else if ($Node = self::findById($from, FALSE)) {
 			if ($Node->isType('Set') ||
 				$Node->isType('Splitter') ||
 				$Node->isType('Option')) {
 				return FALSE;
 			} else if ($Node->isType('Start') && ($Pointer = self::$Pointer)) {
 				if (isset(Node::$Objects[$Pointer->getProperty('id')])) {
-					$LeftId = Node::$Objects[$Pointer->getProperty('id')]->getId();//TODO
+					$LeftId = Node::$Objects[$Pointer->getProperty('id')]->getId();
 				}
 			}
-		}*/
+		}
 		
 		if (isset(Node::$Objects[$to = $this->getProperty('to')])) {
 			$RightId = Node::$Objects[$to]->getId();
-		} else if ($Node = self::findById($to)) {
+		} else if ($Node = self::findById($to, FALSE)) {
 			if ($Node->isType('Set')) {
 				return SetTransition::handle($Node);
 			} else if ($Node->isType('Splitter')) {
@@ -47,6 +47,11 @@ class Transition extends Node {
 			} else if ($Node->isType('Option')) {
 				return OptionTransition::handle($Node);
 			}
+		}
+		
+		if ($RightId == 0 && !self::$saveEnds) {
+			self::$saveEnds = TRUE;
+			return;
 		}
 		
 		$ObjectTransition = new ObjectTransition(array(
