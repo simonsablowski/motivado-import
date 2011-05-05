@@ -6,6 +6,7 @@ class Node extends Importer {
 	protected static $Objects = array();
 	protected static $Pointer;
 	protected static $Collections = array();
+	protected static $saveEnds = TRUE;
 	protected $Element;
 	
 	protected static function pushCollection($Collection) {
@@ -50,12 +51,13 @@ class Node extends Importer {
 		}
 	}
 	
-	public static function find($pattern) {
-		return self::setPointer(self::findTarget($pattern));
+	public static function find($pattern, $setPointer = TRUE) {
+		$Node = self::findTarget($pattern);
+		return $setPointer ? self::setPointer($Node) : $Node;
 	}
 	
-	public static function findById($id) {
-		return self::find(sprintf(Element::getPattern('NodeById'), $id));
+	public static function findById($id, $setPointer = TRUE) {
+		return self::find(sprintf(Element::getPattern('NodeById'), $id), $setPointer);
 	}
 	
 	public static function findNext($pattern = NULL, $Node = NULL) {

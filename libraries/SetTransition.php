@@ -13,6 +13,7 @@ class SetTransition extends Transition {
 		foreach (self::findAllOfNode($Node, Element::getPattern('TransitionTo')) as $TransitionTo) {
 			$from = $TransitionTo->getProperty('from');
 			$Ancestor = self::findById($from);
+			self::$saveEnds = FALSE;
 			$Nodes = self::traverse($Start);
 			foreach (self::findAllOfNode($Node, Element::getPattern('TransitionFrom')) as $TransitionFrom) {
 				$to = $TransitionFrom->getProperty('to');
