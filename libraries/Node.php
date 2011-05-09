@@ -25,7 +25,7 @@ class Node extends Importer {
 		
 		$Nodes = self::findNext($pattern, $Node);
 		foreach ($Nodes as $Node) {
-			if (!in_array($Node, self::getNodes())) {
+			if (!in_array($Node, self::$Nodes)) {
 				self::$Nodes[] = $Node;
 				$Nodes = array_merge($Nodes, self::traverse($Node, $pattern));
 			}
