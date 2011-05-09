@@ -31,6 +31,7 @@ class SetTransition extends Transition {
 					$result = $result && $Transition->register();
 				}
 			}
+			self::traverse();
 		}
 		return $result;
 	}
