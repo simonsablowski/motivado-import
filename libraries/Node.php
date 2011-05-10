@@ -87,10 +87,10 @@ class Node extends Importer {
 		}
 		
 		return array_map('trim', array_values(array(
-			'type' => $matches[2] ? $matches[2] : NULL,
-			'key' => $matches[4] ? $matches[4] : NULL,
-			'properties' => $matches[5] ? sprintf('{%s}', $matches[5]) : NULL,
-			'description' => $matches[6] ? $matches[6] : ($matches[1] ? $matches[1] : NULL)
+			'type' => isset($matches[2]) ? $matches[2] : NULL,
+			'key' => isset($matches[4]) ? $matches[4] : NULL,
+			'properties' => isset($matches[5]) ? sprintf('{%s}', $matches[5]) : NULL,
+			'description' => isset($matches[6]) && $matches[6] ? $matches[6] : (isset($matches[1]) ? $matches[1] : NULL)
 		)));
 	}
 	
