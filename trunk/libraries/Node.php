@@ -81,16 +81,16 @@ class Node extends Importer {
 	}
 	
 	public static function analyze(Node $Node, $disableTypeCheck = FALSE) {
-		preg_match('/(.*)\$(\w+)(:(\w+))?\((.*)\)(.*)/is', $Node->getProperty('description'), $matches);
+		preg_match('/\$(\w+)(:(\w+))?\((.*)\)(.*)/is', $Node->getProperty('description'), $matches);
 		if (!$disableTypeCheck && !$matches) {
 			throw new FatalError('Object type undefined', $Node->summarize());
 		}
 		
 		return array_map('trim', array_values(array(
-			'type' => isset($matches[2]) ? $matches[2] : NULL,
-			'key' => isset($matches[4]) ? $matches[4] : NULL,
-			'properties' => isset($matches[5]) ? sprintf('{%s}', $matches[5]) : NULL,
-			'description' => isset($matches[6]) && $matches[6] ? $matches[6] : (isset($matches[1]) ? $matches[1] : NULL)
+			'type' => isset($matches[1]) ? $matches[1] : NULL,
+			'key' => isset($matches[3]) ? $matches[3] : NULL,
+			'properties' => isset($matches[4]) ? sprintf('{%s}', $matches[4]) : NULL,
+			'description' => isset($matches[5]) ? $matches[5] : NULL
 		)));
 	}
 	
