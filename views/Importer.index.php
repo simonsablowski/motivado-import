@@ -4,6 +4,7 @@
 			</h1>
 			<div class="options">
 				<a class="option" href="<? echo $this->getConfiguration('cheeseUrl'); ?>" title="<? echo $this->localize('Objects'); ?>"><? echo $this->localize('Objects'); ?></a>
+				<a class="option" href="<? echo $this->getConfiguration('baseUrl'); ?>update" title="<? echo $this->localize('Update'); ?>"><? echo $this->localize('Update'); ?></a>
 			</div>
 			<form action="<? echo $this->getConfiguration('baseUrl'); ?>import" method="post">
 				<table class="content">

@@ -3,6 +3,10 @@
 class ImporterController extends Controller {
 	protected $Importer;
 	
+	public function getFields() {
+		return array();
+	}
+	
 	public function setup($void = NULL) {
 		if (is_null($this->getConfiguration('pathModeling'))) {
 			throw new FatalError('Modeling path not set');
@@ -34,6 +38,35 @@ class ImporterController extends Controller {
 		return $files;
 	}
 	
+	protected function updateImportFiles($sourcePath = NULL, $path = NULL) {
+		if (is_null($sourcePath)) {
+			$sourcePath = str_replace('\\', '/', $this->getConfiguration('sourcePathModeling'));
+		}
+		if (is_null($path)) {
+			$path = str_replace('\\', '/', $this->getConfiguration('pathModeling'));
+		}
+		
+		$extension = $this->getConfiguration('fileExtensionModeling');
+		
+		$files = array();
+		$directory = dir($sourcePath);
+		while (($file = $directory->read()) !== FALSE) {
+			if (in_array($file, $this->getConfiguration('ignoreFilesModeling'))) continue;
+			$sourcePathFile = $sourcePath . $file;
+			$pathFile = $path . $file;
+			if (is_file($sourcePathFile) && substr($file, -(strlen($extension))) == $extension) {
+				if (copy($sourcePathFile, $pathFile)) {
+					$files[strstr($file, $extension, TRUE)] = $pathFile;
+				}
+			} else if (is_dir($sourcePathFile)) {
+				$files = array_merge($files, $this->updateImportFiles($sourcePathFile . '/'));
+			}
+		}
+		$directory->close();
+		
+		return $files;
+	}
+	
 	public function index() {
 		if ($this->getRequest()->getData('submit')) {
 			return $this->import();
@@ -56,5 +89,12 @@ class ImporterController extends Controller {
 		return $this->displayView('Importer.import.php', array(
 			'Coachings' => $this->getImporter()->getCoachings()
 		));
+	}
+	
+	public function update() {
+		$this->updateImportFiles();
+		$this->getMessageHandler()->setMessage('Import files successfully updated.');
+		
+		return $this->index();
 	}
 }

@@ -11,8 +11,8 @@ $configuration['coachingTestUrl'] = 'http://localhost/coaching-test/%s';
 $configuration['includeDirectories'] = array(
 	$configuration['pathApplication'],
 	'D:/Entwicklung/api/',
-	'D:/Entwicklung/nacho/',
-	'D:/Entwicklung/cheese/'
+	'D:/Entwicklung/cheese/',
+	'D:/Entwicklung/nacho/'
 );
 
 $configuration['Database'] = array(
@@ -33,7 +33,8 @@ $configuration['Localization'] = array(
 );
 
 $configuration['Request'] = array(
-	'defaultQuery' => 'index'
+	'defaultQuery' => 'index',
+	'aliasQueries' => array()
 );
 
 $configuration['debugMode'] = TRUE;
@@ -41,7 +42,7 @@ $configuration['debugMode'] = TRUE;
 // $configuration['executionTime'] = 120;
 
 $configuration['pathModeling'] = $configuration['pathApplication'] . 'material/modeling/';
-// $configuration['pathModeling'] = 'ftp://gast:gast@192.168.3.102/disk1/share/Inhalt/Modellierung_Kopie/';
+$configuration['sourcePathModeling'] = 'ftp://gast:gast@192.168.3.102/disk1/share/Inhalt/Modellierung/';
 $configuration['fileExtensionModeling'] = '.xpdl';
 $configuration['ignoreFilesModeling'] = array('.', '..', '.svn', 'attachments', 'bpm');
 

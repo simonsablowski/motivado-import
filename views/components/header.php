@@ -11,4 +11,9 @@
 		<script type="text/javascript" src="<? echo $this->getApplication()->getConfiguration('cheeseUrl'); ?>web/js/cheese.js"></script>
 	</head>
 	<body>
+<? if (isset($message) && !empty($message)): ?>
+			<div id="message">
+				<? echo $this->localize($message); ?>
+			</div>
+<? endif; ?>
 		<div id="document">
