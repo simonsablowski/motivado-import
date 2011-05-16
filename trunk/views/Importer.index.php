@@ -1,16 +1,16 @@
 <? $this->displayView('components/header.php', array('title' => 'Import')); ?>
 			<h1>
-				<a href="Importer/index" title="<? echo $this->localize('Import'); ?>"><? echo $this->localize('Import'); ?></a>
+				<a href="index" title="<? echo $this->localize('Import'); ?>"><? echo $this->localize('Import'); ?></a>
 			</h1>
 			<div class="options">
 				<a class="option" href="<? echo $this->getConfiguration('cheeseUrl'); ?>" title="<? echo $this->localize('Objects'); ?>"><? echo $this->localize('Objects'); ?></a>
 			</div>
-			<form action="<? echo $this->getConfiguration('baseUrl'); ?>Importer/import" method="post">
+			<form action="<? echo $this->getConfiguration('baseUrl'); ?>import" method="post">
 				<table class="content">
 					<thead class="head">
 						<tr>
 							<th class="field" colspan="2">
-								<input id="check-all" class="checkbox check-all" type="checkbox" name="checkAll" value="yes"/>
+								<input id="check-all" class="checkbox check-all" type="checkbox" value="yes"/>
 								<label for="check-all">
 									<? echo $this->localize('Directories'); ?>
 								</label>

@@ -6,6 +6,7 @@ $configuration['pathApplication'] = dirname(__FILE__) . '/';
 
 $configuration['baseUrl'] = 'http://localhost/importer/';
 $configuration['cheeseUrl'] = 'http://localhost/cheese/';
+$configuration['coachingTestUrl'] = 'http://localhost/coaching-test/%s';
 
 $configuration['includeDirectories'] = array(
 	$configuration['pathApplication'],
@@ -32,7 +33,7 @@ $configuration['Localization'] = array(
 );
 
 $configuration['Request'] = array(
-	'defaultQuery' => 'Importer/index'
+	'defaultQuery' => 'index'
 );
 
 $configuration['debugMode'] = TRUE;

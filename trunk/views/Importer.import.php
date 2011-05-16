@@ -1,6 +1,6 @@
 <? $this->displayView('components/header.php', array('title' => 'Import')); ?>
 			<h1>
-				<a href="Importer/index" title="<? echo $this->localize('Import'); ?>"><? echo $this->localize('Import'); ?></a>
+				<a href="index" title="<? echo $this->localize('Import'); ?>"><? echo $this->localize('Import'); ?></a>
 			</h1>
 			<div class="options">
 				<a class="option" href="<? echo $this->getConfiguration('cheeseUrl'); ?>" title="<? echo $this->localize('Objects'); ?>"><? echo $this->localize('Objects'); ?></a>
@@ -17,8 +17,11 @@
 				<tbody class="body accordeon">
 <? foreach ($Coachings as $n => $Coaching): ?>
 					<tr id="group<? echo $n + 1; ?>" class="<? echo $n % 2 ? 'even' : 'odd'; ?> divider row">
-						<td class="field data" colspan="5">
+						<td class="field data" colspan="4">
 							<? echo $Coaching->getKey(); ?> <em>(<? echo $this->localize('%d ' . (($count = count($Coaching->getObjects())) == 1 ? $this->localize('object') : $this->localize('objects')), $count); ?>)</em>
+						</td>
+						<td class="field data right">
+							<a href="<? echo sprintf($this->getConfiguration('coachingTestUrl'), $Coaching->getKey()); ?>" title="<? echo $this->localize('Coaching Test'); ?>"><? echo $this->localize('Coaching Test'); ?></a>
 						</td>
 					</tr>
 <? foreach ($Coaching->getObjects() as $m => $Object): ?>
