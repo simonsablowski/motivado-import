@@ -35,6 +35,8 @@ class ImporterController extends Controller {
 		}
 		$directory->close();
 		
+		asort($files);
+		
 		return $files;
 	}
 	
