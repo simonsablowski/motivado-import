@@ -14,6 +14,9 @@ class OptionsNode extends Node {
 		}
 		
 		list(, $key, $properties, $videoUrl) = parent::analyze($Node, TRUE);
+		if (!$videoUrl && $properties) {
+			$videoUrl = $properties;
+		}
 		$properties = array('options' => array());
 		if ($videoUrl) {
 			$properties = array_merge($properties, array(
