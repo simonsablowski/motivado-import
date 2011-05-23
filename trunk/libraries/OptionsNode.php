@@ -14,15 +14,16 @@ class OptionsNode extends Node {
 		}
 		
 		list(, $key, $properties, $videoUrl) = parent::analyze($Node, TRUE);
-		$properties = array('options' => array());
+		$properties = $properties && ($decoded = (array)Json::decode($properties)) ? $decoded : array();
 		if ($videoUrl) {
-			$properties = array_merge($properties, array(
-				'video' => array(
-					'url' => $videoUrl
-				)
-			));
+			$properties['video'] = array(
+				'url' => $videoUrl
+			);
 		}
 		
+		$properties = array_merge($properties, array(
+			'options' => array()
+		));
 		$o = 1;
 		foreach ($options as $option) {
 			$properties['options'][] = array(
