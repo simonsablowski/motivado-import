@@ -18,12 +18,13 @@
 					</tr>
 				</thead>
 				<tbody class="body accordeon">
+<? $coachingTestUrl = $this->getConfiguration('coachingTestUrl'); ?>
 <? foreach ($Coachings as $n => $Coaching): ?>
 					<tr id="group<? echo $n + 1; ?>" class="<? echo $n % 2 ? 'even' : 'odd'; ?> divider row">
-						<td class="field data" colspan="4">
+						<td class="field data" colspan="<? if ($coachingTestUrl): ?>4<? else: ?>5<? endif; ?>">
 							<? echo $Coaching->getKey(); ?> <em>(<? echo $this->localize('%d ' . (($count = count($Coaching->getObjects())) == 1 ? $this->localize('object') : $this->localize('objects')), $count); ?>)</em>
 						</td>
-						<? if ($coachingTestUrl = $this->getConfiguration('coachingTestUrl')): ?>
+						<? if ($coachingTestUrl): ?>
 						<td class="field data right">
 							<a class="external" href="<? echo sprintf($coachingTestUrl, $Coaching->getKey()); ?>" title="<? echo $this->localize('Coaching Test'); ?>"><? echo $this->localize('Coaching Test'); ?></a>
 						</td>
