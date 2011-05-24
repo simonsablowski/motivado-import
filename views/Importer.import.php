@@ -4,7 +4,9 @@
 			</h1>
 			<div class="options">
 				<a class="option" href="<? echo $this->getConfiguration('cheeseUrl'); ?>" title="<? echo $this->localize('Objects'); ?>"><? echo $this->localize('Objects'); ?></a>
+				<? if ($this->getConfiguration('sourcePathModeling')): ?>
 				<a class="option" href="<? echo $this->getConfiguration('baseUrl'); ?>update" title="<? echo $this->localize('Update'); ?>"><? echo $this->localize('Update'); ?></a>
+				<? endif; ?>
 			</div>
 			<table class="content">
 				<thead class="head">
@@ -21,9 +23,11 @@
 						<td class="field data" colspan="4">
 							<? echo $Coaching->getKey(); ?> <em>(<? echo $this->localize('%d ' . (($count = count($Coaching->getObjects())) == 1 ? $this->localize('object') : $this->localize('objects')), $count); ?>)</em>
 						</td>
+						<? if ($coachingTestUrl = $this->getConfiguration('coachingTestUrl')): ?>
 						<td class="field data right">
-							<a href="<? echo sprintf($this->getConfiguration('coachingTestUrl'), $Coaching->getKey()); ?>" title="<? echo $this->localize('Coaching Test'); ?>"><? echo $this->localize('Coaching Test'); ?></a>
+							<a class="external" href="<? echo sprintf($coachingTestUrl, $Coaching->getKey()); ?>" title="<? echo $this->localize('Coaching Test'); ?>"><? echo $this->localize('Coaching Test'); ?></a>
 						</td>
+						<? endif; ?>
 					</tr>
 <? foreach ($Coaching->getObjects() as $m => $Object): ?>
 					<tr class="group<? echo $n + 1; ?> row">
