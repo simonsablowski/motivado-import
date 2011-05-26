@@ -1,6 +1,6 @@
 <?php
 
-class ImporterController extends Controller {
+class ImporterController extends AuthenticationController {
 	protected $Importer;
 	
 	public function getFields() {

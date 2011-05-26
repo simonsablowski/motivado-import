@@ -48,3 +48,5 @@ $configuration['fileExtensionModeling'] = '.xpdl';
 $configuration['ignoreFilesModeling'] = array('.', '..', '.svn', 'attachments', 'bpm');
 
 $configuration['clearTables'] = TRUE;
+
+$configuration['encryptionKey'] = 'hkRTwjHneHf83Gb2wf8z';
