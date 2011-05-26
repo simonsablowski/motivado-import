@@ -1,12 +1,12 @@
-<? $this->displayView('components/header.php', array('title' => 'Import')); ?>
+<? $this->displayView('components/header.php', array('title' => 'Coaching Import')); ?>
 			<h1>
 				<a href="index" title="<? echo $this->localize('Import'); ?>"><? echo $this->localize('Import'); ?></a>
 			</h1>
 			<div class="options">
-				<a class="option" href="<? echo $this->getConfiguration('cheeseUrl'); ?>" title="<? echo $this->localize('Objects'); ?>"><? echo $this->localize('Objects'); ?></a>
-				<? if ($this->getConfiguration('sourcePathModeling')): ?>
+				<a class="external option" href="<? echo $this->getConfiguration('coachingDatabaseUrl'); ?>" title="<? echo $this->localize('Objects'); ?>"><? echo $this->localize('Objects'); ?></a>
+<? if ($this->getConfiguration('sourcePathModeling')): ?>
 				<a class="option" href="<? echo $this->getConfiguration('baseUrl'); ?>update" title="<? echo $this->localize('Update'); ?>"><? echo $this->localize('Update'); ?></a>
-				<? endif; ?>
+<? endif; ?>
 			</div>
 			<table class="content">
 				<thead class="head">
@@ -24,11 +24,11 @@
 						<td class="field data" colspan="<? if ($coachingTestUrl): ?>4<? else: ?>5<? endif; ?>">
 							<? echo $Coaching->getKey(); ?> <em>(<? echo $this->localize('%d ' . (($count = count($Coaching->getObjects())) == 1 ? $this->localize('object') : $this->localize('objects')), $count); ?>)</em>
 						</td>
-						<? if ($coachingTestUrl): ?>
+<? if ($coachingTestUrl): ?>
 						<td class="field data right">
 							<a class="external" href="<? echo sprintf($coachingTestUrl, $Coaching->getKey()); ?>" title="<? echo $this->localize('Coaching Test'); ?>"><? echo $this->localize('Coaching Test'); ?></a>
 						</td>
-						<? endif; ?>
+<? endif; ?>
 					</tr>
 <? foreach ($Coaching->getObjects() as $m => $Object): ?>
 					<tr class="group<? echo $n + 1; ?> row">
@@ -46,7 +46,6 @@
 						</td>
 						<td class="main field">
 							<? if ($title = $Object->getTitle()): ?><? echo $title; ?><? else: ?><? echo $Object->getDescription(); ?><? endif; ?>
-
 						</td>
 						<td class="main field">
 <? $this->displayView('components/StdObject.php', array(
