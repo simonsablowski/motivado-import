@@ -1,12 +1,13 @@
-<? $this->displayView('components/header.php', array('title' => 'Import')); ?>
+<? $this->displayView('components/header.php', array('title' => 'Coaching Import')); ?>
 			<h1>
 				<a href="index" title="<? echo $this->localize('Import'); ?>"><? echo $this->localize('Import'); ?></a>
 			</h1>
 			<div class="options">
-				<a class="option" href="<? echo $this->getConfiguration('cheeseUrl'); ?>" title="<? echo $this->localize('Objects'); ?>"><? echo $this->localize('Objects'); ?></a>
-				<? if ($this->getConfiguration('sourcePathModeling')): ?>
+				<a class="external option" href="<? echo $this->getConfiguration('coachingDatabaseUrl'); ?>" title="<? echo $this->localize('Objects'); ?>"><? echo $this->localize('Objects'); ?></a>
+<? if ($this->getConfiguration('sourcePathModeling')): ?>
 				<a class="option" href="<? echo $this->getConfiguration('baseUrl'); ?>update" title="<? echo $this->localize('Update'); ?>"><? echo $this->localize('Update'); ?></a>
-				<? endif; ?>			</div>
+<? endif; ?>
+			</div>
 			<form action="<? echo $this->getConfiguration('baseUrl'); ?>import" method="post">
 				<table class="content">
 					<thead class="head">
@@ -15,6 +16,7 @@
 								<input id="check-all" class="checkbox check-all" type="checkbox" value="yes"/>
 								<label for="check-all">
 									<? echo $this->localize('Directories'); ?>
+
 								</label>
 							</th>
 						</tr>
@@ -26,6 +28,7 @@
 									<input id="checkbox<? echo $key; ?>" class="checkbox" type="checkbox" name="keys[<? echo $key; ?>]" value="<? echo $directory; ?>"/>
 									<label for="checkbox<? echo $key; ?>">
 										<? echo $key; ?>
+
 									</label>
 								</td>
 								<td class="wide field">

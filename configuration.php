@@ -4,8 +4,9 @@ $configuration = array();
 
 $configuration['pathApplication'] = dirname(__FILE__) . '/';
 
-$configuration['baseUrl'] = 'http://localhost/importer/';
+$configuration['baseUrl'] = 'http://localhost/coaching-import/';
 $configuration['cheeseUrl'] = 'http://localhost/cheese/';
+$configuration['coachingDatabaseUrl'] = 'http://localhost/coaching-database/';
 $configuration['coachingTestUrl'] = 'http://localhost/coaching-test/%s';
 
 $configuration['includeDirectories'] = array(
