@@ -49,7 +49,7 @@
 						</td>
 						<td class="main field">
 <? $this->displayView('components/StdObject.php', array(
-	'StdObject' => Json::decode($Object->getProperties()),
+	'StdObject' => \Motivado\Api\Json::decode($Object->getProperties()),
 	'indent' => 7
 )); ?>
 						</td>
