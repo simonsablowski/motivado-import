@@ -54,7 +54,7 @@ class Transition extends Node {
 			return;
 		}
 		
-		$ObjectTransition = new ObjectTransition(array(
+		$ObjectTransition = new \Motivado\Api\ObjectTransition(array(
 			'CoachingId' => Node::$Coaching->getId(),
 			'LeftId' => $LeftId,
 			'RightId' => $RightId,

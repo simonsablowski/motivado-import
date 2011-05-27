@@ -142,7 +142,7 @@ class Node extends Importer {
 			throw new FatalError('Unknown object type', $this->summarize());
 		}
 		
-		if ($properties && !Json::decode($properties)) {
+		if ($properties && !\Motivado\Api\Json::decode($properties)) {
 			throw new FatalError('Invalid JSON code', $this->summarize());
 		}
 		if ($title && strlen($title) > 255 && !$description) {
@@ -150,7 +150,7 @@ class Node extends Importer {
 			$title = '';
 		}
 		
-		$Object = new Object(array(
+		$Object = new \Motivado\Api\Object(array(
 			'CoachingId' => self::$Coaching->getId(),
 			'type' => $type,
 			'key' => $key,
