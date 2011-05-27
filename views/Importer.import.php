@@ -3,7 +3,9 @@
 				<a href="index" title="<? echo $this->localize('Import'); ?>"><? echo $this->localize('Import'); ?></a>
 			</h1>
 			<div class="options">
+<? if ($this->getConfiguration('coachingDatabaseUrl')): ?>
 				<a class="external option" href="<? echo $this->getConfiguration('coachingDatabaseUrl'); ?>" title="<? echo $this->localize('Objects'); ?>"><? echo $this->localize('Objects'); ?></a>
+<? endif; ?>
 <? if ($this->getConfiguration('sourcePathModeling')): ?>
 				<a class="option" href="<? echo $this->getConfiguration('baseUrl'); ?>update" title="<? echo $this->localize('Update'); ?>"><? echo $this->localize('Update'); ?></a>
 <? endif; ?>
