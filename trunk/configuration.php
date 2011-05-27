@@ -12,6 +12,7 @@ $configuration['coachingTestUrl'] = 'http://localhost/coaching-test/%s';
 $configuration['includeDirectories'] = array(
 	$configuration['pathApplication'],
 	'D:/Entwicklung/api/',
+	'D:/Entwicklung/coaching-database/',
 	'D:/Entwicklung/cheese/',
 	'D:/Entwicklung/nacho/'
 );

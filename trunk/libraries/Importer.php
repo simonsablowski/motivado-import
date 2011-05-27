@@ -68,7 +68,7 @@ class Importer extends Application {
 			
 			try {
 				$Coaching = \Motivado\Api\Coaching::findByKey($key);
-			} catch (\Motivado\Api\Error $Error) {
+			} catch (\Error $Error) {
 				$Coaching = new \Motivado\Api\Coaching(array(
 					'key' => $key
 				));
