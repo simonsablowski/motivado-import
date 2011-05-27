@@ -14,7 +14,7 @@ class OptionsNode extends Node {
 		}
 		
 		list(, $key, $properties, $videoUrl) = parent::analyze($Node, TRUE);
-		$properties = $properties && ($decoded = (array)Json::decode($properties)) ? $decoded : array();
+		$properties = $properties && ($decoded = (array)\Motivado\Api\Json::decode($properties)) ? $decoded : array();
 		if ($videoUrl) {
 			$properties['video'] = array(
 				'url' => $videoUrl
@@ -39,7 +39,7 @@ class OptionsNode extends Node {
 		
 		return array_values(array(
 			'key' => $key,
-			'properties' => Json::encode($properties)
+			'properties' => \Motivado\Api\Json::encode($properties)
 		));
 	}
 }

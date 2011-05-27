@@ -9,7 +9,7 @@ class Importer extends Application {
 		$this->setClearTables((bool)$this->getConfiguration('clearTables'));
 	}
 	
-	protected function setCurrentCoaching(Coaching $Coaching) {
+	protected function setCurrentCoaching(\Motivado\Api\Coaching $Coaching) {
 		return $this->Coachings[] = $Coaching;
 	}
 	
@@ -18,7 +18,7 @@ class Importer extends Application {
 	}
 	
 	protected function clearTables() {
-		return Coaching::truncate() && Object::truncate() && ObjectTransition::truncate();
+		return \Motivado\Api\Coaching::truncate() && \Motivado\Api\Object::truncate() && \Motivado\Api\ObjectTransition::truncate();
 	}
 	
 	protected function cleanTables() {
@@ -26,10 +26,10 @@ class Importer extends Application {
 			'CoachingId' => $this->getCurrentCoaching()->getId()
 		);
 		$result = TRUE;
-		foreach (Object::findAll($condition) as $Object) {
+		foreach (\Motivado\Api\Object::findAll($condition) as $Object) {
 			$result = $result && $Object->delete();
 		}
-		foreach (ObjectTransition::findAll($condition) as $ObjectTransition) {
+		foreach (\Motivado\Api\ObjectTransition::findAll($condition) as $ObjectTransition) {
 			$result = $result && $ObjectTransition->delete();
 		}
 		return $result;
@@ -67,9 +67,9 @@ class Importer extends Application {
 			$this->validate('CoachingKey', $key);
 			
 			try {
-				$Coaching = Coaching::findByKey($key);
-			} catch (Error $Error) {
-				$Coaching = new Coaching(array(
+				$Coaching = \Motivado\Api\Coaching::findByKey($key);
+			} catch (\Motivado\Api\Error $Error) {
+				$Coaching = new \Motivado\Api\Coaching(array(
 					'key' => $key
 				));
 				$Coaching->create();
