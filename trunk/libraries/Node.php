@@ -81,7 +81,7 @@ class Node extends Importer {
 	}
 	
 	public static function analyze(Node $Node, $disableTypeCheck = FALSE) {
-		preg_match('/(.+\s+)?\$(\w+)(:(\w+))?\(([\S]*)\)(\s+.+)?/s', $Node->getProperty('description'), $matches);
+		preg_match('/(.+\s+)?\$(\w+)(:(\w+))?\(([\V]*)\)(\s+.+)?/s', $Node->getProperty('description'), $matches);
 		if (!$disableTypeCheck && !$matches) {
 			throw new FatalError('Object type undefined', $Node->summarize());
 		}
