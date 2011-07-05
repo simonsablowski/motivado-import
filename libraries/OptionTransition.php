@@ -8,15 +8,18 @@ class OptionTransition extends Transition {
 				$to = $TransitionFrom->getProperty('to');
 				$Descendant = self::findById($to);
 				$Descendant->register();
-				$Transition = clone $TransitionTo;
-				$Transition->setProperty('to', $Descendant->getProperty('id'));
-				$from = $Transition->getProperty('from');
+				$from = $TransitionTo->getProperty('from');
 				if (!isset(Node::$Objects[$from]) || ($Object = Node::$Objects[$from]) && $Object->getType() != 'Options') {
 					throw new FatalError('Invalid option object', $Node->summarize());
 				}
-				$value = $Transition->getProperty('condition');
+				foreach (self::findAllOfNode(Node::findById($from)) as $n => $TransitionToSibling) {
+					if ($TransitionToSibling->getProperty('to') != $Node->getProperty('id')) continue;
+					$value = ($value = $TransitionTo->getProperty('condition')) ? $value : ($n + 1);
+				}
+				$Transition = clone $TransitionTo;
+				$Transition->setProperty('to', $Descendant->getProperty('id'));
 				$condition = $TransitionFrom->getProperty('condition');
-				$extension = $value ? self::getCondition($Object->getKey(), $value) : '';
+				$extension = self::getCondition($Object->getKey(), $value);
 				$condition = str_replace(' and ' . $extension, '', $condition);
 				$condition .= ($condition && $extension ? ' and ' : '') . $extension;
 				$Transition->setProperty('condition', $condition);
