@@ -97,6 +97,6 @@ class ImporterController extends AuthenticationController {
 		$this->updateImportFiles();
 		$this->getMessageHandler()->setMessage('Import files successfully updated.');
 		
-		return $this->redirect('importer/index');
+		return $this->redirect('index');
 	}
 }
