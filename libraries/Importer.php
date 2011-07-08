@@ -27,10 +27,10 @@ class Importer extends Application {
 		);
 		$result = TRUE;
 		foreach (\Motivado\Api\Object::findAll($condition) as $Object) {
-			$result = $result && $Object->delete();
+			$result = $result && $Object->delete(TRUE);
 		}
 		foreach (\Motivado\Api\ObjectTransition::findAll($condition) as $ObjectTransition) {
-			$result = $result && $ObjectTransition->delete();
+			$result = $result && $ObjectTransition->delete(TRUE);
 		}
 		return $result;
 	}
