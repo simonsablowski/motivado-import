@@ -16,7 +16,7 @@ class OptionsNode extends Node {
 		foreach (Transition::findAllOfNode($Node) as $Transition) {
 			if ($Option = self::findTarget(sprintf(Element::getPattern('OptionById'), $Transition->getProperty('to')))) {
 				$properties['options'][] = array(
-					'key' => ($key = $Transition->getProperty('condition')) ? $key : (count($properties['options']) + 1),
+					'key' => ($k = $Transition->getProperty('condition')) ? $k : (count($properties['options']) + 1),
 					'value' => $Option->getProperty('title')
 				);
 			}
