@@ -15,10 +15,6 @@ class Transition extends Node {
 	}
 	
 	protected function register() {
-		if (isset(self::$ObjectTransitions[$id = $this->getProperty('id')])) {
-			return self::$ObjectTransitions[$id];
-		}
-		
 		$LeftId = 0;
 		$RightId = 0;
 		$condition = $this->getProperty('condition');
@@ -61,7 +57,6 @@ class Transition extends Node {
 			'condition' => $condition
 		));
 		$ObjectTransition->createSafely();
-		self::$ObjectTransitions[$id] = $ObjectTransition;
 		
 		return $ObjectTransition;
 	}
