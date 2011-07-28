@@ -35,7 +35,11 @@ class ImporterController extends AuthenticationController {
 		}
 		$directory->close();
 		
-		asort($files);
+		if ($this->getConfiguration('sortByFileName')) {
+			asort($files);
+		} else {
+			ksort($files);
+		}
 		
 		return $files;
 	}
