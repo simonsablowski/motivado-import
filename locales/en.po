@@ -1,0 +1,69 @@
+# Importer
+
+msgid "Import"
+msgstr "Import"
+
+msgid "Objects"
+msgstr "Objects"
+
+msgid "Directories"
+msgstr "Directories"
+
+msgid "Coachings"
+msgstr "Coachings"
+
+msgid "%d objects"
+msgstr "%d objects"
+
+msgid "%d object"
+msgstr "%d object"
+
+# Error
+
+msgid "Error"
+msgstr "Error"
+
+msgid "Unfortunately,"
+msgstr "Unfortunately"
+
+msgid "we encountered an error:"
+msgstr "we encountered an error:"
+
+msgid "Field"
+msgstr "Feld"
+
+msgid "Value"
+msgstr "Value"
+
+msgid "Type"
+msgstr "Type"
+
+msgid "Fatal"
+msgstr "Fatal"
+
+msgid "Warning"
+msgstr "Warning"
+
+msgid "Message"
+msgstr "Message"
+
+msgid "Invalid controller"
+msgstr "Invalid controller"
+
+msgid "No action defined"
+msgstr "No action defined"
+
+msgid "Invalid action"
+msgstr "Invalid action"
+
+msgid "Missing parameters"
+msgstr "Missing parameters"
+
+msgid "Record not found"
+msgstr "Record not found"
+
+msgid "Details"
+msgstr "Details"
+
+msgid "Trace"
+msgstr "Trace"
