@@ -44,6 +44,7 @@ $configuration['debugMode'] = TRUE;
 // $configuration['executionTime'] = 120;
 
 $configuration['pathModeling'] = $configuration['pathApplication'] . 'material/modeling/';
+$configuration['approvedPathModeling'] = $configuration['pathModeling'] . 'approved/';
 $configuration['sourcePathModeling'] = 'ftp://gast:gast@192.168.3.102/disk1/share/Inhalt/Modellierung/';
 $configuration['fileExtensionModeling'] = '.xpdl';
 $configuration['ignoreFilesModeling'] = array('.', '..', '.svn', 'attachments', 'bpm');
