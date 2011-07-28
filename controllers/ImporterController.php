@@ -83,7 +83,7 @@ class ImporterController extends AuthenticationController {
 		$this->setup();
 		
 		if (!$keys = $this->getRequest()->getData('keys')) {
-			$keys = $this->getImportFiles();
+			$keys = $this->getImportFiles($this->getConfiguration('approvedPathModeling'));
 		}
 		
 		$this->getImporter()->run($keys);
