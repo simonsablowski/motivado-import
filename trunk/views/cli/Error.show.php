@@ -8,7 +8,7 @@ foreach ($fields as $n => $field) {
 	echo $this->localize($field) . ': ';
 	$getter = 'get' . $field;
 	if ($field != 'Details' && $field != 'Trace') {
-		echo $this->localize($Error->$getter())
+		echo $this->localize($Error->$getter());
 	} else {
 		var_dump($Error->$getter());
 	}
