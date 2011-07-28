@@ -26,11 +26,16 @@ $configuration['Database'] = array(
 );
 
 $configuration['Localization'] = array(
-	'default' => 'de_DE',
-	'de_DE' => array(
-		'language' => 'de_DE',
+	'default' => 'en',
+	'de' => array(
+		'language' => 'de',
 		'locale' => 'de_DE',
 		'name' => 'Deutsch'
+	),
+	'en' => array(
+		'language' => 'en',
+		'locale' => 'en_GB',
+		'name' => 'English'
 	)
 );
 
