@@ -24,7 +24,7 @@ msgid "Error"
 msgstr "Error"
 
 msgid "Unfortunately,"
-msgstr "Unfortunately"
+msgstr "Unfortunately,"
 
 msgid "we encountered an error:"
 msgstr "we encountered an error:"
