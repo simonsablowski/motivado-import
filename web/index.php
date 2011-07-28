@@ -7,5 +7,7 @@ foreach ($configuration['includeDirectories'] as $includeDirectory) {
 	if (file_exists($filePath = $includeDirectory . 'Application.php')) break include $filePath;
 }
 
+$configuration['viewsDirectory'] = 'views/web/';
+
 $Application = new Application($configuration, isset($_GET['localization']) ? $_GET['localization'] : NULL);
 $Application->run(sprintf('Importer/%s', isset($_GET['query']) ? $_GET['query'] : NULL));
