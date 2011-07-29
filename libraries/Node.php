@@ -111,7 +111,10 @@ class Node extends Importer {
 	}
 	
 	protected function summarize() {
-		return array_slice((array)$this, 0, 3);
+		return array(
+			'Coaching' => self::$Coaching->getKey(),
+			'Node' => array_slice((array)$this, 0, 3)
+		);
 	}
 	
 	protected function register() {
