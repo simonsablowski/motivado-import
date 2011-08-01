@@ -54,6 +54,6 @@ $configuration['sourcePathModeling'] = 'ftp://gast:gast@192.168.3.102/disk1/shar
 $configuration['fileExtensionModeling'] = '.xpdl';
 $configuration['ignoreFilesModeling'] = array('.', '..', '.svn', 'attachments', 'bpm');
 
-$configuration['clearTables'] = TRUE;
+$configuration['clearTables'] = FALSE;
 
 $configuration['encryptionKey'] = 'hkRTwjHneHf83Gb2wf8z';

@@ -7,6 +7,7 @@ foreach ($configuration['includeDirectories'] as $includeDirectory) {
 	if (file_exists($filePath = $includeDirectory . 'Application.php')) break include $filePath;
 }
 
+$configuration['clearTables'] = TRUE;
 $configuration['viewsDirectory'] = 'views/cli/';
 
 $Application = new Application($configuration);
