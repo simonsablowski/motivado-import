@@ -28,7 +28,7 @@ class ImporterController extends AuthenticationController {
 			if (in_array($file, $this->getConfiguration('ignoreFilesModeling'))) continue;
 			$pathFile = $path . $file;
 			if (is_file($pathFile) && substr($file, -(strlen($extension))) == $extension) {
-				$files[strstr($file, $extension, TRUE)] = $pathFile;
+				$files[$pathFile] = strstr($file, $extension, TRUE);
 			} else if (is_dir($pathFile)) {
 				$files = array_merge($files, $this->getImportFiles($pathFile . '/'));
 			}
@@ -36,9 +36,9 @@ class ImporterController extends AuthenticationController {
 		$directory->close();
 		
 		if ($this->getConfiguration('sortByFileName')) {
-			asort($files);
-		} else {
 			ksort($files);
+		} else {
+			asort($files);
 		}
 		
 		return $files;
@@ -62,7 +62,7 @@ class ImporterController extends AuthenticationController {
 			$pathFile = $path . $file;
 			if (is_file($sourcePathFile) && substr($file, -(strlen($extension))) == $extension) {
 				if (copy($sourcePathFile, $pathFile)) {
-					$files[strstr($file, $extension, TRUE)] = $pathFile;
+					$files[$pathFile] = strstr($file, $extension, TRUE);
 				}
 			} else if (is_dir($sourcePathFile)) {
 				$files = array_merge($files, $this->updateImportFiles($sourcePathFile . '/'));
