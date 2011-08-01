@@ -63,7 +63,7 @@ class Importer extends Application {
 			$this->clearTables();
 		}
 		
-		foreach ($Coachings as $key => $pathFile) {
+		foreach ($Coachings as $pathFile => $key) {
 			$this->validate('CoachingKey', $key);
 			
 			try {
