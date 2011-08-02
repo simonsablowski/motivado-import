@@ -9,24 +9,29 @@
 <? if ($this->getConfiguration('sourcePathModeling')): ?>
 				<a class="option" href="<? echo $this->getConfiguration('baseUrl'); ?>update" title="<? echo $this->localize('Update'); ?>"><? echo $this->localize('Update'); ?></a>
 <? endif; ?>
-				<a class="option" href="<? echo $this->getConfiguration('baseUrl'); ?>groups" title="<? echo $this->localize('Groups'); ?>"><? echo $this->localize('Groups'); ?></a>
+				<a class="option" href="<? echo $this->getConfiguration('baseUrl'); ?>index" title="<? echo $this->localize('List'); ?>"><? echo $this->localize('List'); ?></a>
 			</div>
 			<form action="<? echo $this->getConfiguration('baseUrl'); ?>import" method="post">
 				<table class="content">
 					<thead class="head">
 						<tr>
 							<th class="field" colspan="2">
-								<input id="check-all" class="checkbox check-all" type="checkbox" value="yes"/>
-								<label for="check-all">
-									<? echo $this->localize('Directories'); ?>
+								<? echo $this->localize('Files'); ?>
 
-								</label>
 							</th>
 						</tr>
 					</thead>
-					<tbody class="body">
+					<tbody class="body accordeon">
+<? $path = str_replace('\\', '/', $this->getConfiguration('pathModeling')); $groups = array(); ?>
 <? $n = 0; foreach ($Coachings as $pathFile => $key): $n++; ?>
-						<tr id="group<? echo $key; ?>" class="<? echo $n % 2 ? 'even' : 'odd'; ?> divider">
+<? $group = strstr(str_replace($path, '', $pathFile), '/', TRUE); if (!in_array($group, $groups)): $groups[] = $group; ?>
+						<tr id="group<? echo $group; ?>" class="<? echo $n % 2 ? 'even' : 'odd'; ?> divider row">
+							<td class="field data" colspan="2">
+								<? echo $group; ?>
+							</td>
+						</tr>
+<? endif; ?>
+						<tr class="<? echo $n % 2 ? 'even' : 'odd'; ?> group<? echo $group; ?> row">
 							<td class="field data">
 								<input id="checkbox<? echo $key; ?>" class="checkbox" type="checkbox" name="keys[<? echo $pathFile; ?>]" value="<? echo $key; ?>"/>
 								<label for="checkbox<? echo $key; ?>">

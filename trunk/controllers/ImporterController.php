@@ -35,11 +35,7 @@ class ImporterController extends AuthenticationController {
 		}
 		$directory->close();
 		
-		if ($this->getConfiguration('sortByFileName')) {
-			ksort($files);
-		} else {
-			asort($files);
-		}
+		ksort($files);
 		
 		return $files;
 	}
@@ -79,6 +75,16 @@ class ImporterController extends AuthenticationController {
 		}
 		
 		return $this->displayView('Importer.index.php', array(
+			'Coachings' => $this->getImportFiles()
+		));
+	}
+	
+	public function groups() {
+		if ($this->getRequest()->getData('submit')) {
+			return $this->import();
+		}
+		
+		return $this->displayView('Importer.groups.php', array(
 			'Coachings' => $this->getImportFiles()
 		));
 	}
