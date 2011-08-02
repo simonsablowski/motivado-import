@@ -18,7 +18,7 @@
 							<th class="field" colspan="2">
 								<input id="check-all" class="checkbox check-all" type="checkbox" value="yes"/>
 								<label for="check-all">
-									<? echo $this->localize('Directories'); ?>
+									<? echo $this->localize('Files'); ?>
 
 								</label>
 							</th>
