@@ -17,6 +17,14 @@ class Importer extends Application {
 		return end($this->Coachings);
 	}
 	
+	protected function lockTables() {
+		return Database::lock(array('coaching', 'object', 'objecttransition'));
+	}
+	
+	protected function unlockTables() {
+		return Database::unlock();
+	}
+	
 	protected function clearTables() {
 		return \Motivado\Api\Coaching::truncate() && \Motivado\Api\Object::truncate() && \Motivado\Api\ObjectTransition::truncate();
 	}
@@ -40,6 +48,7 @@ class Importer extends Application {
 			throw new FatalError('Wrong character encoding', $pathFile);
 		}
 		$data = preg_replace('/(xmlns=")(.+)(")/', '$1$3', $contents);
+		Node::flushObjects();
 		Node::setCoaching($this->getCurrentCoaching());
 		Node::pushCollection(new Element($data));
 		if (!Node::find(Element::getPattern('Start'))) {
@@ -63,6 +72,8 @@ class Importer extends Application {
 			$this->clearTables();
 		}
 		
+		$this->lockTables();
+		
 		foreach ($Coachings as $pathFile => $key) {
 			$this->validate('CoachingKey', $key);
 			
@@ -79,5 +90,7 @@ class Importer extends Application {
 			$this->cleanTables();
 			$this->scanFile($pathFile);
 		}
+		
+		$this->unlockTables();
 	}
 }

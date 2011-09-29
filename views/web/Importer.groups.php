@@ -22,8 +22,8 @@
 						</tr>
 					</thead>
 					<tbody class="body accordeon">
-<? $path = str_replace('\\', '/', $this->getConfiguration('pathModeling')); $groups = array(); ?>
-<? $n = 0; foreach ($Coachings as $pathFile => $key): $n++; ?>
+<? $path = realpath($this->getConfiguration('pathModeling')) . '/'; $groups = array(); ?>
+<? $n = 0; foreach ($Coachings as $pathFile => $key): $n++; $pathFile = realpath($pathFile); ?>
 <? $group = strstr(str_replace($path, '', $pathFile), '/', TRUE); if (!in_array($group, $groups)): $groups[] = $group; ?>
 						<tr id="group<? echo $group; ?>" class="<? echo $n % 2 ? 'even' : 'odd'; ?> divider row">
 							<td class="field data" colspan="2">

@@ -1,6 +1,6 @@
 <?php
 
-class ImporterController extends AuthenticationController {
+class ImporterController extends /*Authentication*/Controller {
 	protected $Importer;
 	
 	public function getFields() {
@@ -15,9 +15,14 @@ class ImporterController extends AuthenticationController {
 		$this->setImporter(new Importer($this->getConfiguration()));
 	}
 	
+	protected function standardizePath(&$path) {
+		$path = str_replace('\\', '/', realpath($path)) . '/';
+	}
+	
 	protected function getImportFiles($path = NULL) {
 		if (is_null($path)) {
-			$path = str_replace('\\', '/', $this->getConfiguration('pathModeling'));
+			$path = $this->getConfiguration('pathModeling');
+			$this->standardizePath($path);
 		}
 		
 		$extension = $this->getConfiguration('fileExtensionModeling');
@@ -42,10 +47,12 @@ class ImporterController extends AuthenticationController {
 	
 	protected function updateImportFiles($sourcePath = NULL, $path = NULL) {
 		if (is_null($sourcePath)) {
-			$sourcePath = str_replace('\\', '/', $this->getConfiguration('sourcePathModeling'));
+			$sourcePath = $this->getConfiguration('sourcePathModeling');
+			$this->standardizePath($sourcePath);
 		}
 		if (is_null($path)) {
-			$path = str_replace('\\', '/', $this->getConfiguration('pathModeling'));
+			$path = $this->getConfiguration('pathModeling');
+			$this->standardizePath($path);
 		}
 		
 		$extension = $this->getConfiguration('fileExtensionModeling');
