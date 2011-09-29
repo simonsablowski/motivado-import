@@ -25,7 +25,7 @@
 						</tr>
 					</thead>
 					<tbody class="body">
-<? $n = 0; foreach ($Coachings as $pathFile => $key): $n++; ?>
+<? $n = 0; foreach ($Coachings as $pathFile => $key): $n++; $pathFile = realpath($pathFile); ?>
 						<tr id="group<? echo $key; ?>" class="<? echo $n % 2 ? 'even' : 'odd'; ?> divider">
 							<td class="field data">
 								<input id="checkbox<? echo $key; ?>" class="checkbox" type="checkbox" name="keys[<? echo $pathFile; ?>]" value="<? echo $key; ?>"/>

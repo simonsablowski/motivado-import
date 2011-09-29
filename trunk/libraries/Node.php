@@ -94,6 +94,10 @@ class Node extends Importer {
 		)));
 	}
 	
+	public static function flushObjects() {
+		return self::$Objects = array();
+	}
+	
 	public function __construct(Element $Element) {
 		$this->setElement($Element);
 	}
@@ -131,8 +135,7 @@ class Node extends Importer {
 			list($type, $key, $properties, $description) = self::analyze($this);
 		} else if ($this->isType('Options')) {
 			$type = 'Options';
-			list($key, $properties) = OptionsNode::analyze($this);
-			$description = '';
+			list($key, $properties, $description) = OptionsNode::analyze($this);
 		} else if ($this->isType('Text')) {
 			$type = 'Text';
 			list(, , $properties, $description) = self::analyze($this, TRUE);
