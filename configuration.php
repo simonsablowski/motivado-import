@@ -4,24 +4,19 @@ $configuration = array();
 
 $configuration['pathApplication'] = dirname(__FILE__) . '/';
 
-$configuration['baseUrl'] = 'http://localhost/coaching-import/';
-$configuration['cheeseUrl'] = 'http://localhost/cheese/';
-$configuration['coachingDatabaseUrl'] = 'http://localhost/coaching-database/';
-$configuration['coachingTestUrl'] = 'http://localhost/coaching-test/%s';
-
 $configuration['includeDirectories'] = array(
 	$configuration['pathApplication'],
-	'D:/Entwicklung/api/',
-	'D:/Entwicklung/coaching-database/',
-	'D:/Entwicklung/cheese/',
-	'D:/Entwicklung/nacho/'
+	$configuration['pathApplication'] . '../motivado-api/',
+	$configuration['pathApplication'] . '../motivado-database/',
+	$configuration['pathApplication'] . '../cheese/',
+	$configuration['pathApplication'] . '../nacho/'
 );
 
 $configuration['Database'] = array(
 	'type' => 'MySql',
 	'host' => 'localhost',
-	'name' => 'motivado_importer',
-	'user' => 'root',
+	'name' => 'motivado',
+	'user' => 'motivado',
 	'password' => ''
 );
 
@@ -46,14 +41,18 @@ $configuration['Request'] = array(
 
 $configuration['debugMode'] = TRUE;
 
-// $configuration['executionTime'] = 120;
+$configuration['host'] = 'http://localhost';
+$configuration['baseUrl'] = $configuration['host'] . '/motivado-import/';
+$configuration['cheeseUrl'] = $configuration['host'] . '/cheese/';
+$configuration['coachingDatabaseUrl'] = $configuration['host'] . '/motivado-database/';
+$configuration['coachingTestUrl'] = $configuration['host'] . '/motivado-test/%s';
 
 $configuration['pathModeling'] = $configuration['pathApplication'] . 'material/modeling/unapproved/';
 $configuration['approvedPathModeling'] = $configuration['pathApplication'] . 'material/modeling/approved/';
-$configuration['sourcePathModeling'] = 'ftp://gast:gast@192.168.3.102/disk1/share/Inhalt/Modellierung/';
+$configuration['sourcePathModeling'] = $configuration['pathApplication'] . 'material/modeling/';
 $configuration['fileExtensionModeling'] = '.xpdl';
 $configuration['ignoreFilesModeling'] = array('.', '..', '.svn', 'attachments', 'bpm');
 
 $configuration['clearTables'] = FALSE;
 
-$configuration['encryptionKey'] = 'hkRTwjHneHf83Gb2wf8z';
+$configuration['encryptionKey'] = '***';
